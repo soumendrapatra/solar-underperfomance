@@ -3,17 +3,19 @@
  * Not linked from the nav. Visit manually to review the design system.
  */
 import { useState } from 'react'
-import { Button }   from '../components/ui/Button.jsx'
-import { Badge }    from '../components/ui/Badge.jsx'
-import { Card }     from '../components/ui/Card.jsx'
-import { Stat }     from '../components/ui/Stat.jsx'
-import { Tabs }     from '../components/ui/Tabs.jsx'
-import { Drawer }   from '../components/ui/Drawer.jsx'
-import { Tooltip }  from '../components/ui/Tooltip.jsx'
-import { Table }    from '../components/ui/Table.jsx'
-import { Kbd }      from '../components/ui/Kbd.jsx'
-import { Skeleton } from '../components/ui/Skeleton.jsx'
-import { useToast } from '../components/ui/Toast.jsx'
+import {
+  Button,
+  Badge,
+  Card,
+  Stat,
+  Tabs,
+  Drawer,
+  Tooltip,
+  Table,
+  Kbd,
+  Skeleton,
+  useToast,
+} from '@/components/ui'
 import { formatKW, formatKWh, formatMWh, formatPct, formatCurrency, formatDuration, formatTimeIST } from '../lib/format.js'
 
 // ── Inline SVG icons used in button demos ────────────────────────────────

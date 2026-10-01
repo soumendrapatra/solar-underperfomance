@@ -1,11 +1,8 @@
 import { useState, useRef } from 'react'
 import Papa from 'papaparse'
 import { PageHeader } from '../components/layout/PageHeader.jsx'
-import { Card } from '../components/ui/Card.jsx'
-import { Badge } from '../components/ui/Badge.jsx'
-import { Button } from '../components/ui/Button.jsx'
+import { Card, Badge, Button, useToast } from '@/components/ui'
 import { usePlantStore } from '../store/usePlantStore.js'
-import { useToast } from '../components/ui/Toast.jsx'
 import { cn } from '../lib/cn.js'
 
 export default function Ingest() {

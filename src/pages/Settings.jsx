@@ -1,11 +1,8 @@
 import { useState } from 'react'
 import { PageHeader } from '../components/layout/PageHeader.jsx'
-import { Card } from '../components/ui/Card.jsx'
-import { Badge } from '../components/ui/Badge.jsx'
-import { Button } from '../components/ui/Button.jsx'
+import { Card, Badge, Button, useToast } from '@/components/ui'
 import { useSettingsStore } from '../store/useSettingsStore.js'
 import { engineClient } from '../workers/engineClient.js'
-import { useToast } from '../components/ui/Toast.jsx'
 import { cn } from '../lib/cn.js'
 
 export default function Settings() {

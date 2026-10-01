@@ -5,11 +5,7 @@ import { usePlantStore } from '../store/usePlantStore.js'
 import { useWorkOrderStore } from '../store/useWorkOrderStore.js'
 import { useSettingsStore } from '../store/useSettingsStore.js'
 import { useReducedMotion } from '../hooks/useReducedMotion.js'
-import { useToast } from '../components/ui/Toast.jsx'
-import { Badge } from '../components/ui/Badge.jsx'
-import { Button } from '../components/ui/Button.jsx'
-import { Card } from '../components/ui/Card.jsx'
-import { Drawer } from '../components/ui/Drawer.jsx'
+import { useToast, Badge, Button, Card, Drawer } from '@/components/ui'
 import { cn } from '../lib/cn.js'
 
 // Deterministic ML signed contributions for failure modes

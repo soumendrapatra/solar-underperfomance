@@ -4,12 +4,8 @@ import { useWorkOrderStore, WORK_ORDER_STATUSES } from '../store/useWorkOrderSto
 import { usePlantStore } from '../store/usePlantStore.js'
 import { useSettingsStore } from '../store/useSettingsStore.js'
 import { useCountUp } from '../hooks/useCountUp.js'
-import { useToast } from '../components/ui/Toast.jsx'
+import { useToast, Card, Badge, Button, Drawer } from '@/components/ui'
 import { PageHeader } from '../components/layout/PageHeader.jsx'
-import { Card } from '../components/ui/Card.jsx'
-import { Badge } from '../components/ui/Badge.jsx'
-import { Button } from '../components/ui/Button.jsx'
-import { Drawer } from '../components/ui/Drawer.jsx'
 import { cn } from '../lib/cn.js'
 
 const STATUS_COLUMNS = [

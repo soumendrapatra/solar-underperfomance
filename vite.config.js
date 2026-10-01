@@ -8,6 +8,10 @@ export default defineConfig({
       '@': '/src',
     },
   },
+  build: {
+    minify: 'esbuild',
+    sourcemap: true,
+  },
   test: {
     globals: true,
     environment: 'jsdom',
@@ -18,4 +22,3 @@ export default defineConfig({
     },
   },
 })
-

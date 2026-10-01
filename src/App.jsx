@@ -2,9 +2,7 @@ import { Suspense, lazy } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import AppLayout from './layouts/AppLayout.jsx'
 import LandingLayout from './layouts/LandingLayout.jsx'
-import LoadingBar from './components/ui/LoadingBar.jsx'
-import { ToastProvider } from './components/ui/Toast.jsx'
-import { ErrorBoundary } from './components/ui/ErrorBoundary.jsx'
+import { LoadingBar, ToastProvider, ErrorBoundary } from '@/components/ui'
 
 /* Lazy-load each page. The engine and charts only load when needed. */
 const Landing    = lazy(() => import('./pages/Landing.jsx'))
