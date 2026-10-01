@@ -203,8 +203,7 @@ export default function Portfolio() {
                     <td className="py-3 px-4"><Skeleton className="h-4 w-20 mx-auto" /></td>
                   </tr>
                 ))
-              ) : (
-                portfolio.map((plant, idx) => {
+              ) : portfolio.map((plant, idx) => {
                 const diag = diagnoses[plant.id]
                 const summary = diag?.summary
                 const pr = summary?.plantPr ?? 0.81

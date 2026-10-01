@@ -421,8 +421,8 @@ export default function Model() {
                 01. Transient Filtering
               </span>
               <p className="text-ink-2">
-                Stein et al. Variability Index ($VI = \sum |\Delta POA| / \sum |\Delta POA_{CS}|$) computes high-frequency
-                cloud ramps. Any sample with $VI {">"} 1.30$ is gated from steady-state diagnosis, eliminating false alarms.
+                Stein et al. Variability Index (VI = sum |ΔPOA| / sum |ΔPOA_CS|) computes high-frequency
+                cloud ramps. Any sample with VI &gt; 1.30 is gated from steady-state diagnosis, eliminating false alarms.
               </p>
             </div>
 
