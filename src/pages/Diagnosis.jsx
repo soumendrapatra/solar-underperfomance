@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo, useRef } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { usePlantStore } from '../store/usePlantStore.js'
 import { useWorkOrderStore } from '../store/useWorkOrderStore.js'
 import { useSettingsStore } from '../store/useSettingsStore.js'
@@ -251,6 +251,13 @@ export default function Diagnosis() {
     }
   }, [diagId, tickets, diagnosis])
 
+  // Redirect to portfolio if diagId is not provided
+  useEffect(() => {
+    if (!diagId) {
+      navigate('/app', { replace: true })
+    }
+  }, [diagId, navigate])
+
   // Typewriter effect for prescription
   useEffect(() => {
     if (reduced) {
@@ -333,17 +340,27 @@ export default function Diagnosis() {
       </div>
 
       {/* Screen Navigation Breadcrumbs */}
-      <div className="print:hidden flex items-center justify-between border-b border-line pb-3">
-        <div className="flex items-center gap-2 font-mono text-xs text-ink-2">
-          <Link to="/app" className="hover:text-ink">
-            Portfolio
-          </Link>
-          <span>/</span>
-          <Link to={`/app/plant/${selectedPlantId}`} className="hover:text-ink">
-            {activePlant.name}
-          </Link>
-          <span>/</span>
-          <span className="text-ink font-medium uppercase">{anomaly.mode.replace(/_/g, ' ')}</span>
+      <div className="print:hidden flex flex-wrap items-center justify-between gap-3 border-b border-line pb-3">
+        <div className="flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate(`/app/plant/${selectedPlantId}`)}
+            className="text-xs font-mono"
+          >
+            ← Back to plant
+          </Button>
+          <div className="flex items-center gap-2 font-mono text-xs text-ink-2">
+            <Link to="/app" className="hover:text-ink">
+              Portfolio
+            </Link>
+            <span>/</span>
+            <Link to={`/app/plant/${selectedPlantId}`} className="hover:text-ink">
+              {activePlant.name}
+            </Link>
+            <span>/</span>
+            <span className="text-ink font-medium uppercase">{anomaly.mode.replace(/_/g, ' ')}</span>
+          </div>
         </div>
 
         <Badge variant={anomaly.priority === 'P1' ? 'critical' : 'medium'}>

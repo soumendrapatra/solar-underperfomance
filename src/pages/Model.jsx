@@ -177,7 +177,7 @@ export default function Model() {
                                 ? 'bg-warn/15 text-warn'
                                 : 'bg-paper text-ink-2/40'
                             )}
-                            title={`True: ${confusionMatrix.classes[rIdx]}, Pred: ${confusionMatrix.classes[cIdx]} -> ${val}`}
+                            title={`True: ${confusionMatrix.classes[rIdx]}, Pred: ${confusionMatrix.classes[cIdx]} → ${val}`}
                           >
                             {val}
                           </td>
@@ -422,7 +422,7 @@ export default function Model() {
               </span>
               <p className="text-ink-2">
                 Stein et al. Variability Index ($VI = \sum |\Delta POA| / \sum |\Delta POA_{CS}|$) computes high-frequency
-                cloud ramps. Any sample with $VI > 1.30$ is gated from steady-state diagnosis, eliminating false alarms.
+                cloud ramps. Any sample with $VI {">"} 1.30$ is gated from steady-state diagnosis, eliminating false alarms.
               </p>
             </div>
 

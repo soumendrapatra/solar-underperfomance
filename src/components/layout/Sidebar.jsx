@@ -1,6 +1,5 @@
-import { useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { usePlantStore } from '../../store/usePlantStore.js'
 import { cn } from '../../lib/cn.js'
 

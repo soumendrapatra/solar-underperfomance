@@ -22,9 +22,7 @@ import { generateWorkOrders } from './prescriptive/actionPlanner.js'
  * @param {object} plant
  * @returns {object} Features object
  */
-export function extractDiagnosticFeatures(records, plant) {
-  let prDropSum = 0
-  let prDropCount = 0
+export function extractDiagnosticFeatures(records, _plant) {
   let maxTinvDelta = 0
   let totalClipSamples = 0
   let totalDaySamples = 0

@@ -20,6 +20,33 @@ module.exports = {
     'react/jsx-no-undef': ['error', { allowGlobals: false }],
     'react/react-in-jsx-scope': 'off',
     'react/prop-types': 'off',
-    'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+    'no-unused-vars': [
+      'warn',
+      {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_',
+        ignoreRestSiblings: true,
+      },
+    ],
   },
+  overrides: [
+    {
+      files: ['src/tests/**', '**/*.test.js', '**/*.test.jsx'],
+      env: {
+        node: true,
+      },
+      globals: {
+        describe: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        vi: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+      },
+      rules: {
+        'no-unused-vars': 'off',
+      },
+    },
+  ],
 }

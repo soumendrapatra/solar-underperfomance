@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { usePlantStore } from '../store/usePlantStore.js'
 import { useSettingsStore } from '../store/useSettingsStore.js'
 import { SCENARIO_PRESETS } from '../engine/simulator/scenarios.js'
@@ -73,6 +73,23 @@ export default function Lab() {
   const activePlant = useMemo(() => {
     return portfolio.find((p) => p.id === selectedPlantId) || portfolio[0]
   }, [portfolio, selectedPlantId])
+
+  // Sync worker stage progress with the 6 pipeline blocks
+  useEffect(() => {
+    if (!stageProgress?.stage) return
+    const stageStr = stageProgress.stage.toLowerCase()
+    let stageIdx = -1
+    if (stageStr.includes('sanity')) stageIdx = 0
+    else if (stageStr.includes('physics') || stageStr.includes('twin') || stageStr.includes('simulat')) stageIdx = 1
+    else if (stageStr.includes('yield') || stageStr.includes('gap')) stageIdx = 2
+    else if (stageStr.includes('transient')) stageIdx = 3
+    else if (stageStr.includes('fusion') || stageStr.includes('ml') || stageStr.includes('fingerprint')) stageIdx = 4
+    else if (stageStr.includes('prescript') || stageStr.includes('work order')) stageIdx = 5
+
+    if (stageIdx >= 0) {
+      setActivePipelineStageIndex(stageIdx)
+    }
+  }, [stageProgress])
 
   // Randomize Seed
   const handleRandomizeSeed = () => {
@@ -200,10 +217,22 @@ export default function Lab() {
           seed,
           soilingRate: soilingEnabled ? soilingRate : 0,
           deratingCapKw: deratingEnabled ? deratingCapKw : 1250,
+          deratingTempThreshold: deratingEnabled ? deratingTempThreshold : 78,
+          shadingStart: shadingEnabled ? shadingStart : 7.5,
+          shadingEnd: shadingEnabled ? shadingEnd : 9.5,
           droppedStrings: openStringsEnabled ? openStringsCount : 0,
+          diodeStrings: diodeEnabled ? diodeCount : 0,
           sensorDriftPct: driftEnabled ? driftOffsetPct : 0,
           curtailmentCapKw: curtailmentEnabled ? curtailmentLimitMw * 1000 : 10000,
+          curtailmentStart: curtailmentEnabled ? curtailmentStart : 12.0,
+          curtailmentEnd: curtailmentEnabled ? curtailmentEnd : 14.5,
+          weatherType,
+          transientIntensity,
         })
+
+        if (res?.timings) {
+          setStageTimings(res.timings)
+        }
 
         // Determine detected items
         const detected = injectedGroundTruth.map((item) => ({
@@ -223,6 +252,7 @@ export default function Lab() {
           detected,
           precision,
           recall,
+          estimatedRevenueLoss: detected.length * 4820,
           prescriptions: detected.map((d) => {
             if (d.mode === 'thermal_derating') {
               return 'Inverter heatsink derating detected on INV-04. Clean external blower fan #2 and air mesh filters.'
@@ -472,6 +502,21 @@ export default function Lab() {
                           className="w-full accent-accent"
                         />
                       </div>
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-[11px]">
+                          <span className="text-ink-2">Heatsink Temp Threshold</span>
+                          <span className="text-accent font-medium tabular-nums">{deratingTempThreshold} °C</span>
+                        </div>
+                        <input
+                          type="range"
+                          min="65"
+                          max="95"
+                          step="1"
+                          value={deratingTempThreshold}
+                          onChange={(e) => setDeratingTempThreshold(Number(e.target.value))}
+                          className="w-full accent-accent"
+                        />
+                      </div>
                     </div>
                   )}
                 </div>
@@ -483,22 +528,37 @@ export default function Lab() {
                     <SpringToggle checked={shadingEnabled} onChange={setShadingEnabled} />
                   </div>
                   {shadingEnabled && (
-                    <div className="space-y-1 pt-1 border-t border-line/60">
-                      <div className="flex justify-between text-[11px]">
-                        <span className="text-ink-2">Diurnal Window (IST)</span>
-                        <span className="text-ink font-medium tabular-nums">
-                          {shadingStart.toFixed(1)}h - {shadingEnd.toFixed(1)}h
-                        </span>
+                    <div className="space-y-2 pt-1 border-t border-line/60">
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-[11px]">
+                          <span className="text-ink-2">Start Hour (IST)</span>
+                          <span className="text-ink font-medium tabular-nums">{shadingStart.toFixed(1)}h</span>
+                        </div>
+                        <input
+                          type="range"
+                          min="6.5"
+                          max="10.0"
+                          step="0.5"
+                          value={shadingStart}
+                          onChange={(e) => setShadingStart(Number(e.target.value))}
+                          className="w-full accent-accent"
+                        />
                       </div>
-                      <input
-                        type="range"
-                        min="6.5"
-                        max="11.0"
-                        step="0.5"
-                        value={shadingStart}
-                        onChange={(e) => setShadingStart(Number(e.target.value))}
-                        className="w-full accent-accent"
-                      />
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-[11px]">
+                          <span className="text-ink-2">End Hour (IST)</span>
+                          <span className="text-ink font-medium tabular-nums">{shadingEnd.toFixed(1)}h</span>
+                        </div>
+                        <input
+                          type="range"
+                          min="8.0"
+                          max="13.0"
+                          step="0.5"
+                          value={shadingEnd}
+                          onChange={(e) => setShadingEnd(Number(e.target.value))}
+                          className="w-full accent-accent"
+                        />
+                      </div>
                     </div>
                   )}
                 </div>
@@ -560,20 +620,52 @@ export default function Lab() {
                     <SpringToggle checked={curtailmentEnabled} onChange={setCurtailmentEnabled} />
                   </div>
                   {curtailmentEnabled && (
-                    <div className="space-y-1 pt-1 border-t border-line/60">
-                      <div className="flex justify-between text-[11px]">
-                        <span className="text-ink-2">SLDC Export Limit</span>
-                        <span className="text-accent font-medium tabular-nums">{curtailmentLimitMw.toFixed(1)} MWac</span>
+                    <div className="space-y-2 pt-1 border-t border-line/60">
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-[11px]">
+                          <span className="text-ink-2">SLDC Export Limit</span>
+                          <span className="text-accent font-medium tabular-nums">{curtailmentLimitMw.toFixed(1)} MWac</span>
+                        </div>
+                        <input
+                          type="range"
+                          min="5.0"
+                          max="9.0"
+                          step="0.5"
+                          value={curtailmentLimitMw}
+                          onChange={(e) => setCurtailmentLimitMw(Number(e.target.value))}
+                          className="w-full accent-accent"
+                        />
                       </div>
-                      <input
-                        type="range"
-                        min="5.0"
-                        max="9.0"
-                        step="0.5"
-                        value={curtailmentLimitMw}
-                        onChange={(e) => setCurtailmentLimitMw(Number(e.target.value))}
-                        className="w-full accent-accent"
-                      />
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-[11px]">
+                          <span className="text-ink-2">Window Start (IST)</span>
+                          <span className="text-ink font-medium tabular-nums">{curtailmentStart.toFixed(1)}h</span>
+                        </div>
+                        <input
+                          type="range"
+                          min="10.0"
+                          max="13.5"
+                          step="0.5"
+                          value={curtailmentStart}
+                          onChange={(e) => setCurtailmentStart(Number(e.target.value))}
+                          className="w-full accent-accent"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-[11px]">
+                          <span className="text-ink-2">Window End (IST)</span>
+                          <span className="text-ink font-medium tabular-nums">{curtailmentEnd.toFixed(1)}h</span>
+                        </div>
+                        <input
+                          type="range"
+                          min="12.5"
+                          max="16.5"
+                          step="0.5"
+                          value={curtailmentEnd}
+                          onChange={(e) => setCurtailmentEnd(Number(e.target.value))}
+                          className="w-full accent-accent"
+                        />
+                      </div>
                     </div>
                   )}
                 </div>
@@ -669,6 +761,11 @@ export default function Lab() {
               <span className="label text-ink font-medium">INJECTED (GROUND TRUTH) VS DETECTED</span>
               {lastRunResults && (
                 <div className="flex items-center gap-3 font-mono text-xs">
+                  {lastRunResults.estimatedRevenueLoss > 0 && (
+                    <span>
+                      Avoidable Loss: <strong className="text-fault">{currency} {lastRunResults.estimatedRevenueLoss.toLocaleString('en-IN')}</strong>
+                    </span>
+                  )}
                   <span>
                     Precision: <strong className="text-ok">{(lastRunResults.precision * 100).toFixed(0)}%</strong>
                   </span>

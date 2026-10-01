@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { PageHeader } from '../components/layout/PageHeader.jsx'
-import { Card, Badge, Button, Stat } from '@/components/ui'
+import { Card, Badge } from '@/components/ui'
 import { usePlantStore } from '../store/usePlantStore.js'
 import { SPRING_CONFIG } from '../lib/constants.js'
 import { motion } from 'framer-motion'
@@ -154,7 +154,7 @@ export default function DataHealth() {
     <div className="space-y-6">
       {/* Header */}
       <PageHeader
-        eyebrow="SCADA Integrity · Data QC & Calibration"
+        eyebrow={`SCADA Integrity · Data QC & Calibration · ${activePlant.name.toUpperCase()}`}
         title="Data Health & Quality Gates"
         description="Pre-diagnostic sanitization: missing timestamp repair, frozen value detection, physical range boundaries, and fleet-implied pyranometer recalibration."
       >
@@ -181,12 +181,12 @@ export default function DataHealth() {
         <div className="space-y-0.5">
           <div className="flex items-center gap-2">
             <span className="font-mono text-xs font-semibold text-ink">
-              Toggle Raw Data Ingestion (Bypass Sanity Checks)
+              Toggle Raw Data Ingestion (Bypass Sanity Checks) — {activePlant.name}
             </span>
             {bypassSanity && <Badge variant="critical">Sanity Bypassed</Badge>}
           </div>
           <p className="font-sans text-xs text-ink-2">
-            Simulates diagnosing on raw un-sanitized telemetry to demonstrate false alarm generation.
+            Simulates diagnosing on raw un-sanitized telemetry ({records.length || 2016} records) to demonstrate false alarm generation.
           </p>
         </div>
 
@@ -216,13 +216,12 @@ export default function DataHealth() {
       {bypassSanity && (
         <div className="border border-fault bg-fault/10 p-4 space-y-1">
           <div className="flex items-center justify-between font-mono text-xs text-fault font-bold uppercase">
-            <span>Critical QC Alert: Sanity Checks Disabled</span>
+            <span>Critical QC Alert: Sanity Checks Disabled ({activePlant.name})</span>
             <span>+{rawFalseAlarmsCount} False Hardware Alarms Generated</span>
           </div>
           <p className="font-sans text-xs text-ink leading-relaxed">
-            Without stuck value and pyranometer drift correction, the uncalibrated irradiance error (+8.1%) creates
-            an apparent yield gap across all 8 central inverters, falsely raising {rawFalseAlarmsCount} bogus &quot;Uniform Soiling&quot;
-            and &quot;Inverter Underperformance&quot; work orders.
+            Without stuck value and pyranometer drift correction across {records.length || 2016} SCADA intervals, the uncalibrated irradiance error (+8.1%) creates
+            an apparent yield gap, falsely raising {rawFalseAlarmsCount} bogus tickets (Current diagnosed: {diagnoses[selectedPlantId]?.fusedModes?.length || 0} valid vs {(diagnoses[selectedPlantId]?.fusedModes?.length || 0) + rawFalseAlarmsCount} uncalibrated).
           </p>
         </div>
       )}
@@ -230,7 +229,7 @@ export default function DataHealth() {
       {/* Pyranometer Drift Card */}
       <Card
         figure="01"
-        header="Pyranometer Calibration Drift vs Fleet-Implied Consensus"
+        header={`Pyranometer Calibration Drift vs Fleet-Implied Consensus — ${activePlant.name}`}
         headerRight={
           <Badge variant={isDriftPlant ? 'medium' : 'ok'}>
             {isDriftPlant ? `Drift Factor: ${driftFactor.toFixed(3)} (+${driftPct}%)` : 'Factory Calibrated'}

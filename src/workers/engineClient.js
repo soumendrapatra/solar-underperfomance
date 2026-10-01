@@ -95,7 +95,7 @@ class EngineClient {
       this.worker.onerror = (err) => {
         console.warn('[EngineClient] Worker error, falling back to main-thread execution:', err)
         // Reject all pending and discard worker
-        for (const [id, entry] of this.pending.entries()) {
+        for (const [_id, entry] of this.pending.entries()) {
           entry.reject(new Error(err.message || 'Worker thread crashed'))
         }
         this.pending.clear()

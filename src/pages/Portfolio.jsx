@@ -190,7 +190,21 @@ export default function Portfolio() {
               </tr>
             </thead>
             <tbody>
-              {portfolio.map((plant, idx) => {
+              {loading ? (
+                Array.from({ length: 4 }).map((_, i) => (
+                  <tr key={i} className="border-b border-line/60 dark:border-console-line/60">
+                    <td className="py-3 px-4"><Skeleton className="h-4 w-36" /></td>
+                    <td className="py-3 px-3"><Skeleton className="h-4 w-20" /></td>
+                    <td className="py-3 px-3 text-right"><Skeleton className="h-4 w-16 ml-auto" /></td>
+                    <td className="py-3 px-3 text-right"><Skeleton className="h-4 w-14 ml-auto" /></td>
+                    <td className="py-3 px-3 text-right"><Skeleton className="h-4 w-12 ml-auto" /></td>
+                    <td className="py-3 px-3"><Skeleton className="h-4 w-24" /></td>
+                    <td className="py-3 px-3 text-right"><Skeleton className="h-4 w-16 ml-auto" /></td>
+                    <td className="py-3 px-4"><Skeleton className="h-4 w-20 mx-auto" /></td>
+                  </tr>
+                ))
+              ) : (
+                portfolio.map((plant, idx) => {
                 const diag = diagnoses[plant.id]
                 const summary = diag?.summary
                 const pr = summary?.plantPr ?? 0.81
@@ -302,7 +316,16 @@ export default function Portfolio() {
           </span>
         </div>
 
-        {openTickets.length === 0 ? (
+        {loading ? (
+          <div className="grid grid-cols-1 gap-2.5">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="p-4 border border-line dark:border-console-line bg-paper dark:bg-console-panel space-y-2">
+                <Skeleton className="h-4 w-1/4" />
+                <Skeleton className="h-4 w-3/4" />
+              </div>
+            ))}
+          </div>
+        ) : openTickets.length === 0 ? (
           <Card>
             <div className="p-6 text-center text-xs text-ink-2 dark:text-console-text/60 font-sans">
               No active critical or high-priority tickets. All fleet systems operating within nominal tolerances.

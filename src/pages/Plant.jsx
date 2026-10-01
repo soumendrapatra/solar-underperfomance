@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useParams, useNavigate } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { usePlantStore } from '../store/usePlantStore.js'
 import { useWorkOrderStore } from '../store/useWorkOrderStore.js'
 import { PageHeader } from '../components/layout/PageHeader.jsx'
@@ -8,9 +8,8 @@ import { WeatherStrip } from '../components/plant/WeatherStrip.jsx'
 import { PowerCurve } from '../components/plant/PowerCurve.jsx'
 import { InverterHeatmap } from '../components/plant/InverterHeatmap.jsx'
 import { LossWaterfallChart } from '../components/plant/LossWaterfallChart.jsx'
-import { Badge, Button, Card, Drawer } from '@/components/ui'
-import { formatCurrency, formatKWh } from '../lib/format.js'
-import { cn } from '../lib/cn.js'
+import { Badge, Button, Card, Drawer, Skeleton } from '@/components/ui'
+import { formatCurrency } from '../lib/format.js'
 
 export default function Plant() {
   const { plantId } = useParams()
@@ -22,7 +21,6 @@ export default function Plant() {
   const telemetryCache = usePlantStore((s) => s.telemetryCache)
   const diagnoses = usePlantStore((s) => s.diagnoses)
   const loading = usePlantStore((s) => s.loading)
-  const runScenario = usePlantStore((s) => s.runScenario)
 
   const tickets = useWorkOrderStore((s) => s.tickets)
 
@@ -52,7 +50,7 @@ export default function Plant() {
 
   const handleOpenDetail = (issue) => {
     setSelectedIssue(issue)
-    setDrawerOpen(true)
+    navigate(`/app/diagnosis/${issue.mode || issue.id || 'thermal_derating'}`)
   }
 
   return (
@@ -68,22 +66,43 @@ export default function Plant() {
 
       {/* ── 2. PowerCurve (Fig. 01) ─────────────────────────────────── */}
       <section>
-        <PowerCurve
-          records={telemetry?.records || []}
-          maxPac={plant?.acCapacityKw || 10000}
-        />
+        {loading ? (
+          <div className="border border-line dark:border-console-line bg-paper dark:bg-console-panel p-6 space-y-4">
+            <div className="h-6 w-1/4 bg-line/40 rounded animate-pulse" />
+            <Skeleton className="h-64 w-full" />
+          </div>
+        ) : (
+          <PowerCurve
+            records={telemetry?.records || []}
+            maxPac={plant?.acCapacityKw || 10000}
+          />
+        )}
       </section>
 
       {/* ── Two Column Grid: Heatmap (Fig. 02) + Waterfall (Fig. 03) ── */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-start">
         {/* ── 3. InverterHeatmap (Fig. 02) ───────────────────────────── */}
         <section>
-          <InverterHeatmap plant={plant} telemetry={telemetry} />
+          {loading ? (
+            <div className="border border-line dark:border-console-line bg-paper dark:bg-console-panel p-6 space-y-4">
+              <div className="h-6 w-1/3 bg-line/40 rounded animate-pulse" />
+              <Skeleton className="h-72 w-full" />
+            </div>
+          ) : (
+            <InverterHeatmap plant={plant} telemetry={telemetry} />
+          )}
         </section>
 
         {/* ── 4. LossWaterfall (Fig. 03) ─────────────────────────────── */}
         <section>
-          <LossWaterfallChart waterfall={diagnosis?.waterfall} />
+          {loading ? (
+            <div className="border border-line dark:border-console-line bg-paper dark:bg-console-panel p-6 space-y-4">
+              <div className="h-6 w-1/3 bg-line/40 rounded animate-pulse" />
+              <Skeleton className="h-72 w-full" />
+            </div>
+          ) : (
+            <LossWaterfallChart waterfall={diagnosis?.waterfall} />
+          )}
         </section>
       </div>
 
@@ -123,7 +142,7 @@ export default function Plant() {
                 <motion.div
                   key={cardId}
                   layoutId={cardId}
-                  onClick={() => navigate(`/app/diagnosis/${item.mode}`)}
+                  onClick={() => handleOpenDetail(item)}
                   className="border border-line dark:border-console-line bg-paper dark:bg-console-panel p-4 flex flex-col justify-between cursor-pointer hover:border-ink dark:hover:border-console-text transition-colors rounded-[2px] space-y-4 group"
                 >
                   <div className="space-y-2">

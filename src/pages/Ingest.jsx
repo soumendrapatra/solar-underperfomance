@@ -2,11 +2,7 @@ import { useState, useRef } from 'react'
 import Papa from 'papaparse'
 import { PageHeader } from '../components/layout/PageHeader.jsx'
 import { Card, Badge, Button, useToast } from '@/components/ui'
-import { usePlantStore } from '../store/usePlantStore.js'
-import { cn } from '../lib/cn.js'
-
 export default function Ingest() {
-  const { portfolio, selectedPlantId, setSelectedPlantId, runScenario } = usePlantStore()
   const pushToast = useToast()
   const fileInputRef = useRef(null)
 
