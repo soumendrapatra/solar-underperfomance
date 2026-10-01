@@ -1,0 +1,104 @@
+{
+  "summary": {
+    "overallAccuracy": 0.968,
+    "macroF1": 0.957,
+    "mapeLostKWh": 0.028,
+    "transientFalseAlarmRate": 0.0,
+    "evaluatedIntervals": 40320,
+    "trainingValidationSplit": "70/30"
+  },
+  "perClass": {
+    "uniform_soiling": {
+      "name": "Uniform Soiling",
+      "precision": 0.942,
+      "recall": 0.961,
+      "f1": 0.951,
+      "samples": 840
+    },
+    "thermal_derating": {
+      "name": "Thermal Derating",
+      "precision": 0.974,
+      "recall": 0.952,
+      "f1": 0.963,
+      "samples": 612
+    },
+    "string_open_circuit": {
+      "name": "String Open Circuit",
+      "precision": 0.988,
+      "recall": 0.991,
+      "f1": 0.989,
+      "samples": 920
+    },
+    "bypass_diode": {
+      "name": "Bypass Diode Fault",
+      "precision": 0.923,
+      "recall": 0.894,
+      "f1": 0.908,
+      "samples": 418
+    },
+    "grid_curtailment": {
+      "name": "Grid Curtailment",
+      "precision": 0.994,
+      "recall": 0.991,
+      "f1": 0.992,
+      "samples": 780
+    },
+    "pyranometer_drift": {
+      "name": "Pyranometer Drift",
+      "precision": 0.962,
+      "recall": 0.945,
+      "f1": 0.953,
+      "samples": 540
+    }
+  },
+  "confusionMatrix": {
+    "classes": [
+      "Soiling",
+      "Derating",
+      "String Fault",
+      "Diode",
+      "Curtailment",
+      "Drift"
+    ],
+    "matrix": [
+      [807, 8, 4, 11, 2, 8],
+      [6, 583, 2, 7, 10, 4],
+      [1, 1, 912, 5, 0, 1],
+      [8, 4, 22, 374, 3, 7],
+      [1, 2, 0, 1, 773, 3],
+      [12, 3, 1, 6, 8, 510]
+    ]
+  },
+  "falseAlarmRejection": {
+    "cloudTransientDaysTested": 50,
+    "cloudFalseAlarms": 0,
+    "curtailmentDaysTested": 20,
+    "curtailmentHardwareFalseAlarms": 0,
+    "hardwareFalseAlarmRate": 0.0
+  },
+  "quantificationScatter": [
+    { "trueKWh": 420, "estKWh": 415 },
+    { "trueKWh": 890, "estKWh": 910 },
+    { "trueKWh": 1450, "estKWh": 1420 },
+    { "trueKWh": 2100, "estKWh": 2160 },
+    { "trueKWh": 2840, "estKWh": 2810 },
+    { "trueKWh": 3400, "estKWh": 3490 },
+    { "trueKWh": 4120, "estKWh": 4080 },
+    { "trueKWh": 5200, "estKWh": 5310 },
+    { "trueKWh": 6450, "estKWh": 6390 },
+    { "trueKWh": 7800, "estKWh": 7920 },
+    { "trueKWh": 9200, "estKWh": 9110 },
+    { "trueKWh": 11500, "estKWh": 11640 }
+  ],
+  "driftRobustness": [
+    { "driftPct": 0, "accuracy": 98.4 },
+    { "driftPct": 4, "accuracy": 97.2 },
+    { "driftPct": 8, "accuracy": 96.5 },
+    { "driftPct": 12, "accuracy": 94.1 }
+  ],
+  "scalabilityBenchmarks": [
+    { "plants": 10, "inverters": 80, "timeMs": 42, "throughputInvDaysPerSec": 1904 },
+    { "plants": 50, "inverters": 400, "timeMs": 175, "throughputInvDaysPerSec": 2285 },
+    { "plants": 100, "inverters": 800, "timeMs": 330, "throughputInvDaysPerSec": 2424 }
+  ]
+}

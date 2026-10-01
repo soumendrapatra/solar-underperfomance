@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Base layer ─────────────────────────────────────────────────────────── */
+@layer base {
+  /* Subtle paper grain via inline SVG noise at 3% opacity */
+  body {
+    @apply bg-paper text-ink font-sans antialiased dark:bg-console-bg dark:text-console-text;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  }
+
+  /* Tabular figures on all mono text and .num */
+  .font-mono,
+  code,
+  pre,
+  .num {
+    font-feature-settings: "tnum" 1, "zero" 1;
+  }
+
+  /* Selection: amber at 25% */
+  ::selection {
+    background-color: rgb(217 121 11 / 0.25);
+    color: inherit;
+  }
+}
+
+/* ── Component layer ─────────────────────────────────────────────────────── */
+@layer components {
+  /* Small uppercase mono label — used for all field headers */
+  .label {
+    @apply font-mono text-ink-2 dark:text-console-text/60 uppercase;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+  }
+
+  /* Hairline border utility */
+  .border-hairline {
+    border-width: 1px;
+  }
+
+  /* Amber progress bar used as Suspense fallback */
+  .progress-bar {
+    @apply fixed top-0 left-0 h-[2px] bg-accent z-50;
+    animation: progress 1.2s ease-in-out infinite;
+  }
+
+  @keyframes progress {
+    0%   { width: 0%; opacity: 1; }
+    60%  { width: 80%; opacity: 1; }
+    100% { width: 100%; opacity: 0; }
+  }
+
+  /* Skeleton shimmer — slow (1.6 s), very low contrast */
+  @keyframes shimmer {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(200%); }
+  }
+
+  .skeleton-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .skeleton-shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgb(243 240 232 / 0.45) 50%,
+      transparent 100%
+    );
+    animation: shimmer 1.6s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton-shimmer::after {
+      animation: none;
+    }
+  }
+}
+
