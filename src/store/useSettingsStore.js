@@ -6,11 +6,11 @@
 
 import { create } from 'zustand'
 
-const SETTINGS_KEY = 'kiran_settings'
+const SETTINGS_KEY = 'solarpower_settings'
 
 function loadSettings() {
   const defaults = {
-    tariff: 3.15,
+    tariff: 6.5, // Assumed institutional electricity tariff (INR 6.50/kWh)
     currency: 'INR',
     theme: 'paper', // 'paper' or 'console' (dark)
     llmEnabled: false,

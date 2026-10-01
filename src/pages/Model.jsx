@@ -64,10 +64,18 @@ export default function Model() {
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Empirical Verification & Validation"
-        title="Model Report"
-        description="Comprehensive evaluation report benchmarked on 40,320 operational intervals across 6 failure modes, cloud transient rejection, and scalability throughput."
+        eyebrow="ACADEMIC PROTOTYPE EVALUATION · SYNTHETIC TELEMETRY"
+        title="Model Evaluation"
+        description="Comprehensive evaluation report benchmarked on 40,320 operational intervals across campus failure modes, cloud transient rejection, and engine throughput."
       />
+
+      {/* Simulation Evaluation Honesty Banner */}
+      <div className="p-3 border border-amber-500/30 bg-amber-500/10 text-xs font-sans text-amber-900 dark:text-amber-200 rounded-[2px] flex items-start gap-2.5">
+        <span className="font-mono text-amber-600 dark:text-amber-400 font-bold shrink-0 mt-0.5">NOTE:</span>
+        <p className="leading-relaxed">
+          <strong>SIMULATION EVALUATION:</strong> Model metrics below are evaluated on simulated datasets generated using calibrated PV physics models for Government College of Engineering Kalahandi. Real-world validation with physical IoT sensor telemetry is planned in Future Scope.
+        </p>
+      </div>
 
       {/* Top Validation Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">

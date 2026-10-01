@@ -10,34 +10,34 @@ const WATERFALL_STEPS = [
   {
     step: '01 / 04',
     title: 'Ambient & Temperature Derate',
-    loss: '-3.1 %',
-    detail: 'Sandia SAPM calculates 58.4 °C module temperature. High heat reduces cell bandgap; normal physics loss, not a fault.',
-    actualKw: 1140,
-    expectedKw: 1250,
+    loss: '-3.2 %',
+    detail: 'Sandia SAPM calculates 54.2 °C module temperature under Kalahandi ambient sun. Normal physics loss, not an actionable fault.',
+    actualKw: 48.4,
+    expectedKw: 50.0,
   },
   {
     step: '02 / 04',
-    title: 'Uniform Desert Soiling',
-    loss: '-4.8 %',
-    detail: 'Monotonic PR decay over 7 dry days across all 8 central inverters. Crosses wash payback economic threshold.',
-    actualKw: 1080,
-    expectedKw: 1140,
+    title: 'Academic Block Dust Soiling',
+    loss: '-5.8 %',
+    detail: 'Monotonic PR decay over 7 dry days across Main Academic Block array. Crosses manual cleaning threshold at INR 6.50/kWh tariff.',
+    actualKw: 45.5,
+    expectedKw: 48.4,
   },
   {
     step: '03 / 04',
-    title: 'Inverter Thermal Derating',
-    loss: '-6.2 %',
-    detail: 'INV-04 heatsink temperature climbs to 78.8 °C. Internal controller clamps generation flat at 850 kWac ceiling.',
-    actualKw: 850,
-    expectedKw: 1080,
+    title: 'Library Inverter Thermal Derating',
+    loss: '-6.4 %',
+    detail: 'INV-L1 heatsink temperature exceeds 78 °C during peak noon heat. Internal controller derates generation to protect power electronics.',
+    actualKw: 42.4,
+    expectedKw: 45.5,
   },
   {
     step: '04 / 04',
-    title: 'String Open Circuit',
+    title: 'Department Roof String Mismatch',
     loss: '-4.1 %',
-    detail: 'Combiner Box SCB-02 string 07 delivers 0.0 A during 880 W/m² peak sun. Blown 15A inline gPV fuse isolated.',
-    actualKw: 802,
-    expectedKw: 850,
+    detail: 'Combiner Box string 03 delivers abnormal low current under 880 W/m² irradiance. Flagged for lab assistant wiring inspection.',
+    actualKw: 40.3,
+    expectedKw: 42.4,
   },
 ]
 
@@ -50,7 +50,7 @@ export default function Landing() {
   const [typerVisible, setTyperVisible] = useState(false)
   const [typedText, setTypedText] = useState('')
   const fullSentence =
-    'Generation is 18.2 % below expected. Likely causes: Inverter Thermal Derating on INV-04. Recommended action: Inspect blower fan #2 and clean intake air filters.'
+    'Generation is 19.4 % below expected on Library Hall (INV-L1). Likely cause: Inverter Thermal Derating due to restricted airflow on rooftop enclosure. Recommended action: Direct Campus Electrician to inspect inverter louvers and clean heatsink fins.'
 
   // Smooth scroll with Lenis (if available and not reduced motion)
   useEffect(() => {
@@ -117,21 +117,27 @@ export default function Landing() {
       {/* ── Top Bar ─────────────────────────────────────────────── */}
       <header className="border-b border-line px-6 py-4 flex items-center justify-between sticky top-0 bg-paper/95 backdrop-blur-sm z-30">
         <div className="flex items-center gap-2.5">
-          <span className="font-display text-xl font-normal tracking-tight text-ink">Kiran</span>
-          <span className="font-mono text-[10px] uppercase tracking-[0.08em] px-1.5 py-0.5 border border-line bg-paper-2 text-ink">
-            RCA
+          <span className="font-display text-xl font-normal tracking-tight text-ink">SolarPower</span>
+          <span className="font-mono text-[10px] uppercase tracking-[0.08em] px-1.5 py-0.5 border border-line bg-paper-2 text-accent font-semibold">
+            CAMPUS
+          </span>
+          <span className="hidden sm:inline font-mono text-xs text-ink-2/80 border-l border-line pl-3">
+            Govt. College of Engineering Kalahandi
           </span>
         </div>
 
-        <div className="flex items-center gap-4">
-          <span className="font-mono text-xs text-ink-2 hidden sm:inline">
-            Bhadla Block C · 12.4 MWp DC / 10 MWac
-          </span>
+        <div className="flex items-center gap-3">
+          <Link
+            to="/app/methodology"
+            className="font-mono text-xs uppercase tracking-wider px-3 py-1.5 text-ink-2 hover:text-ink transition-colors hidden md:inline"
+          >
+            Methodology
+          </Link>
           <Link
             to="/app"
             className="font-mono text-xs uppercase tracking-wider px-3.5 py-1.5 border border-ink bg-ink text-paper hover:bg-ink-2 transition-colors"
           >
-            Open Console &rarr;
+            Open Campus Dashboard &rarr;
           </Link>
         </div>
       </header>
@@ -141,20 +147,26 @@ export default function Landing() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           {/* Left Column */}
           <div className="lg:col-span-7 space-y-6">
-            <span className="font-mono text-xs uppercase tracking-[0.08em] text-accent block">
-              SOLAR O&amp;M &middot; ROOT-CAUSE DIAGNOSIS
-            </span>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-mono text-xs uppercase tracking-[0.08em] text-accent block">
+                CAMPUS ROOFTOP SOLAR &middot; ROOT-CAUSE FAULT DIAGNOSIS
+              </span>
+              <span className="font-mono text-[9px] uppercase px-1.5 py-0.5 border border-amber-500/30 bg-amber-500/10 text-amber-800">
+                SIMULATED TELEMETRY
+              </span>
+            </div>
 
-            <h1 className="font-display text-4xl sm:text-[62px] font-normal text-ink tracking-tight leading-[1.06]">
-              Your plant lost{' '}
-              <span className="font-mono text-accent font-medium tabular-nums">18 %</span> today.
+            <h1 className="font-display text-4xl sm:text-[54px] font-normal text-ink tracking-tight leading-[1.08]">
+              Library Hall solar lost{' '}
+              <span className="font-mono text-accent font-medium tabular-nums">19.4 %</span> today.
               <br />
               Here is why.
             </h1>
 
             <p className="font-sans text-base sm:text-lg text-ink-2 leading-relaxed max-w-xl">
-              Kiran compares SCADA telemetry against a first-principles physics digital twin, rejects cloud transients,
-              isolates the exact failure mode across inverters and strings, and issues plain-language CMMS directives.
+              SolarPower compares high-resolution rooftop telemetry against a physics digital twin calibrated for
+              Government College of Engineering Kalahandi, filters monsoon cloud transients, isolates hardware fault
+              signatures across 5 campus buildings, and drafts maintenance directives for the campus electrician.
             </p>
 
             <div className="pt-2 flex flex-wrap items-center gap-3">
@@ -162,13 +174,19 @@ export default function Landing() {
                 to="/app"
                 className="inline-flex items-center justify-center font-mono text-xs uppercase tracking-wider px-6 py-3 border border-ink bg-ink text-paper hover:bg-ink-2 transition-colors"
               >
-                Open Console
+                Open Campus Dashboard
               </Link>
               <Link
                 to="/app/lab"
                 className="inline-flex items-center justify-center font-mono text-xs uppercase tracking-wider px-6 py-3 border border-line bg-paper text-ink hover:border-ink transition-colors"
               >
                 Run a Fault Scenario &rarr;
+              </Link>
+              <Link
+                to="/app/methodology"
+                className="inline-flex items-center justify-center font-mono text-xs uppercase tracking-wider px-4 py-3 text-ink-2 hover:text-ink transition-colors"
+              >
+                Methodology
               </Link>
             </div>
           </div>
@@ -247,31 +265,31 @@ export default function Landing() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="border border-line p-4 space-y-1 bg-paper">
             <span className="font-mono text-3xl font-medium text-ink tabular-nums block">
-              INR 4.8L
+              INR 1,420
             </span>
-            <span className="label text-ink-2 text-[10px] block">DAILY REVENUE LEAKAGE</span>
+            <span className="label text-ink-2 text-[10px] block">DAILY CAMPUS LOSS</span>
             <p className="font-sans text-xs text-ink-2 leading-relaxed">
-              Lost per 100 MW portfolio from unnoticed soiling plateaus and thermal clipping misdiagnosed as normal operation.
+              Lost across 150 kW campus rooftop array from unnoticed dust soiling and inverter thermal clipping at INR 6.50/kWh tariff.
             </p>
           </div>
 
           <div className="border border-line p-4 space-y-1 bg-paper">
-            <span className="font-mono text-3xl font-medium text-ink tabular-nums block">
-              42 mins
+            <span className="font-mono text-3xl font-medium text-accent tabular-nums block">
+              5 Rooftops
             </span>
-            <span className="label text-ink-2 text-[10px] block">SCADA TRIAGE DELAY</span>
+            <span className="label text-ink-2 text-[10px] block">CAMPUS ZONES MONITORED</span>
             <p className="font-sans text-xs text-ink-2 leading-relaxed">
-              Average time spent by field engineers manually cross-referencing weather stations and SCB string currents.
+              Academic Block, Workshop, Library, Extra Class, and Department clusters with individual orientation physics models.
             </p>
           </div>
 
           <div className="border border-line p-4 space-y-1 bg-paper">
-            <span className="font-mono text-3xl font-medium text-fault tabular-nums block">
-              68 %
+            <span className="font-mono text-3xl font-medium text-ok tabular-nums block">
+              0.0 %
             </span>
-            <span className="label text-ink-2 text-[10px] block">CONVENTIONAL FALSE ALARMS</span>
+            <span className="label text-ink-2 text-[10px] block">TRANSIENT FALSE ALARMS</span>
             <p className="font-sans text-xs text-ink-2 leading-relaxed">
-              Standard inverter threshold alarms triggered by ordinary cloud passing and diurnal ramps during monsoon.
+              Variability Index gates passing monsoon clouds without generating unnecessary work orders for the campus electrician.
             </p>
           </div>
         </div>
@@ -400,10 +418,10 @@ export default function Landing() {
             </div>
             <h3 className="font-display text-lg text-ink font-medium">Prescriptive CMMS</h3>
             <ul className="space-y-2 text-xs text-ink-2 font-sans">
-              <li>&bull; Exact sentence: Below expected &rarr; Causes &rarr; Action.</li>
-              <li>&bull; Quantified lost kWh &amp; revenue loss (INR 3.15/kWh).</li>
+              <li>&bull; Exact directive: Below expected &rarr; Causes &rarr; Action.</li>
+              <li>&bull; Quantified lost kWh &amp; institutional loss (INR 6.50/kWh).</li>
               <li>&bull; Automated P1 / P2 / P3 priority scoring.</li>
-              <li>&bull; Field technician checklists and LOTO safety notices.</li>
+              <li>&bull; Campus electrician and lab assistant task checklists.</li>
             </ul>
           </div>
         </div>
@@ -423,7 +441,7 @@ export default function Landing() {
         <div className="border border-line bg-paper p-6 space-y-3">
           <div className="flex items-center justify-between font-mono text-xs">
             <span className="label text-accent">REAL-TIME CRUCIBLE SYNTHESIS</span>
-            <span className="text-ink-2">Target: INV-04</span>
+            <span className="text-ink-2">Target: Library Hall (INV-L1)</span>
           </div>
 
           <div className="min-h-[64px]">
@@ -437,7 +455,7 @@ export default function Landing() {
 
           <div className="flex items-center justify-between pt-3 border-t border-line font-mono text-xs text-ink-2">
             <span>Confidence: 94.2% · P1 Critical</span>
-            <Link to="/app/diagnosis/thermal_derating" className="text-accent hover:underline">
+            <Link to="/app/diagnosis/library-hall" className="text-accent hover:underline">
               Inspect Full Diagnosis &rarr;
             </Link>
           </div>
@@ -485,7 +503,7 @@ export default function Landing() {
               </svg>
             </div>
             <p className="font-sans text-xs text-ink-2 leading-relaxed">
-              Midday 850 kWac flat plateau with heatsink &gt; 78.5 °C. Correctly isolated as blower fan failure; ticket queued for dispatch.
+              Midday 17.5 kWac flat plateau on Library INV-L1 with heatsink &gt; 78.5 °C. Correctly isolated as thermal derating; ticket assigned to campus maintenance.
             </p>
           </div>
         </div>
@@ -525,20 +543,13 @@ export default function Landing() {
       {/* ── Section 8: Plain Footer ─────────────────────────────── */}
       <footer className="max-w-6xl mx-auto px-6 py-12 flex flex-col sm:flex-row items-center justify-between text-xs font-mono text-ink-2 gap-4">
         <div>
-          KIRAN RCA &middot; BUILT FOR THE ADVANCED AGENTIC CODING HACKATHON
+          SOLARPOWER CAMPUS &middot; GOVT. COLLEGE OF ENGINEERING KALAHANDI &middot; ACADEMIC PROTOTYPE
         </div>
         <div className="flex items-center gap-6">
-          <Link to="/app" className="hover:text-ink">Console</Link>
+          <Link to="/app" className="hover:text-ink">Campus Dashboard</Link>
           <Link to="/app/lab" className="hover:text-ink">Scenario Lab</Link>
-          <Link to="/app/model" className="hover:text-ink">Model Report</Link>
-          <a
-            href="https://github.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-ink"
-          >
-            GitHub
-          </a>
+          <Link to="/app/model" className="hover:text-ink">Model Evaluation</Link>
+          <Link to="/app/methodology" className="hover:text-ink">Methodology</Link>
         </div>
       </footer>
     </div>

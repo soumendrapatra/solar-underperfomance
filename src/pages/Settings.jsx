@@ -44,16 +44,16 @@ export default function Settings() {
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Configuration & Performance Benchmarks"
+        eyebrow="Configuration & Calibration · GCE Kalahandi"
         title="Settings & Calibration"
-        description="PPA commercial tariffs, detection sensitivity gates, display themes, and Web Worker benchmark performance suite."
+        description="Institutional electricity tariffs, college campus rooftop parameters, display themes, and engine benchmark performance suite."
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Column: Commercial & Theme Settings */}
         <div className="space-y-6">
-          {/* Commercial PPA Tariff Card */}
-          <Card figure="01" header="Commercial PPA Tariff & Currency">
+          {/* Institutional Electricity Tariff Card */}
+          <Card figure="01" header="Institutional Electricity Tariff & Currency">
             <form onSubmit={handleSaveTariff} className="space-y-4 font-mono text-xs">
               <div className="space-y-1.5">
                 <span className="text-ink-2">Base Tariff Rate ({currency} / kWh)</span>
@@ -75,13 +75,13 @@ export default function Settings() {
 
               {/* Quick Presets */}
               <div className="space-y-1.5 pt-1">
-                <span className="label text-ink-2 text-[10px]">Regional PPA Presets</span>
+                <span className="label text-ink-2 text-[10px]">Institutional Tariff Presets</span>
                 <div className="flex flex-wrap gap-2">
                   {[
-                    { label: 'Bhadla SECI (₹3.15)', val: 3.15 },
-                    { label: 'Pavagada P4 (₹2.90)', val: 2.90 },
-                    { label: 'Charanka C&I (₹4.20)', val: 4.20 },
-                    { label: 'Kurnool AP (₹3.45)', val: 3.45 },
+                    { label: 'Campus Concessional (₹6.50)', val: 6.50 },
+                    { label: 'Odisha Grid Commercial (₹7.10)', val: 7.10 },
+                    { label: 'Educational Net-Metering (₹6.20)', val: 6.20 },
+                    { label: 'Campus Off-Peak (₹5.80)', val: 5.80 },
                   ].map((preset) => (
                     <button
                       key={preset.label}
@@ -89,7 +89,7 @@ export default function Settings() {
                       onClick={() => {
                         setTariffInput(preset.val.toString())
                         setTariff(preset.val)
-                        pushToast(`PPA tariff set to ₹${preset.val}/kWh`)
+                        pushToast(`Institutional tariff set to ₹${preset.val}/kWh`)
                       }}
                       className="px-2 py-1 bg-paper-2 border border-line text-[11px] text-ink hover:border-ink transition-colors"
                     >
@@ -159,6 +159,37 @@ export default function Settings() {
                   </span>
                 </button>
               </div>
+            </div>
+          </Card>
+
+          {/* College Campus Profile Card */}
+          <Card figure="03" header="Academic Institution & Solar Profile">
+            <div className="space-y-3 font-mono text-xs">
+              <div className="space-y-1">
+                <span className="text-ink-2 text-[10px] uppercase">Institution</span>
+                <p className="font-sans text-xs font-medium text-ink">Government College of Engineering Kalahandi</p>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-[11px]">
+                <div className="border border-line p-2 bg-paper-2">
+                  <span className="text-ink-2 text-[10px] block">Location</span>
+                  <span className="text-ink font-medium">Kalahandi, Odisha</span>
+                </div>
+                <div className="border border-line p-2 bg-paper-2">
+                  <span className="text-ink-2 text-[10px] block">Coordinates</span>
+                  <span className="text-ink font-medium">19.9015° N, 83.1649° E</span>
+                </div>
+                <div className="border border-line p-2 bg-paper-2">
+                  <span className="text-ink-2 text-[10px] block">Monitored Capacity</span>
+                  <span className="text-ink font-medium">150 kWp DC / 135 kWac</span>
+                </div>
+                <div className="border border-line p-2 bg-paper-2">
+                  <span className="text-ink-2 text-[10px] block">Rooftop Zones</span>
+                  <span className="text-ink font-medium">5 Campus Buildings</span>
+                </div>
+              </div>
+              <p className="font-sans text-[11px] text-ink-2 pt-1 border-t border-line leading-relaxed">
+                Academic engineering demonstration using simulated telemetry. Live physical SCADA connection pending future hardware deployment.
+              </p>
             </div>
           </Card>
         </div>

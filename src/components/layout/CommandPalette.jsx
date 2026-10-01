@@ -22,20 +22,21 @@ export function CommandPalette({ isOpen, onClose }) {
 
   // 1. Navigation Pages
   items.push(
-    { id: 'page-portfolio', category: 'Pages', title: 'Portfolio Overview', path: '/app' },
-    { id: 'page-wo', category: 'Pages', title: 'Work Orders & CMMS', path: '/app/work-orders' },
+    { id: 'page-portfolio', category: 'Pages', title: 'Campus Overview', path: '/app' },
+    { id: 'page-wo', category: 'Pages', title: 'Maintenance Tasks & Work Orders', path: '/app/work-orders' },
     { id: 'page-lab', category: 'Pages', title: 'Scenario Lab & Simulation', path: '/app/lab' },
     { id: 'page-health', category: 'Pages', title: 'Data Health & Sanity QC', path: '/app/data-health' },
-    { id: 'page-model', category: 'Pages', title: 'Physics Digital Twin & Model', path: '/app/model' },
-    { id: 'page-settings', category: 'Pages', title: 'Plant & Telemetry Settings', path: '/app/settings' }
+    { id: 'page-model', category: 'Pages', title: 'Model Evaluation & Benchmark', path: '/app/model' },
+    { id: 'page-methodology', category: 'Pages', title: 'Methodology & Architecture', path: '/app/methodology' },
+    { id: 'page-settings', category: 'Pages', title: 'Settings & Calibration', path: '/app/settings' }
   )
 
-  // 2. Plants
+  // 2. Campus Zones
   for (const plant of portfolio) {
     items.push({
       id: `plant-${plant.id}`,
-      category: 'Plants',
-      title: `${plant.name} (${(plant.dcCapacityKwp / 1000).toFixed(1)} MWp)`,
+      category: 'Campus Zones',
+      title: `${plant.name} (${plant.dcCapacityKwp} kWp)`,
       action: () => {
         setSelectedPlantId(plant.id)
         navigate(`/app/plant/${plant.id}`)
@@ -43,7 +44,7 @@ export function CommandPalette({ isOpen, onClose }) {
     })
   }
 
-  // 3. Inverters of active plant
+  // 3. Inverters of active zone
   const activePlant = portfolio.find((p) => p.id === selectedPlantId) || portfolio[0]
   if (activePlant?.inverters) {
     for (const inv of activePlant.inverters) {
@@ -56,11 +57,11 @@ export function CommandPalette({ isOpen, onClose }) {
     }
   }
 
-  // 4. Work Orders
+  // 4. Maintenance Tasks
   for (const ticket of tickets.slice(0, 8)) {
     items.push({
       id: `ticket-${ticket.id}`,
-      category: 'Work Orders',
+      category: 'Maintenance Tasks',
       title: `${ticket.id} · [${ticket.priority}] ${ticket.assetId} - ${ticket.modeName}`,
       path: '/app/work-orders',
     })

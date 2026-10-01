@@ -39,18 +39,20 @@ export function Topbar({ onOpenCommandPalette }) {
   // Compute dynamic breadcrumbs
   const getBreadcrumbs = () => {
     const parts = location.pathname.split('/').filter(Boolean)
-    const crumbs = [{ label: 'PORTFOLIO', to: '/app' }]
+    const crumbs = [{ label: 'CAMPUS OVERVIEW', to: '/app' }]
 
     if (parts[1] === 'plant') {
-      crumbs.push({ label: activePlant?.name?.toUpperCase() || 'PLANT', to: location.pathname })
+      crumbs.push({ label: activePlant?.name?.toUpperCase() || 'ZONE', to: location.pathname })
     } else if (parts[1] === 'work-orders') {
-      crumbs.push({ label: 'WORK ORDERS', to: '/app/work-orders' })
+      crumbs.push({ label: 'MAINTENANCE', to: '/app/work-orders' })
     } else if (parts[1] === 'lab') {
       crumbs.push({ label: 'SCENARIO LAB', to: '/app/lab' })
     } else if (parts[1] === 'data-health') {
       crumbs.push({ label: 'DATA HEALTH', to: '/app/data-health' })
     } else if (parts[1] === 'model') {
-      crumbs.push({ label: 'MODEL REPORT', to: '/app/model' })
+      crumbs.push({ label: 'MODEL EVALUATION', to: '/app/model' })
+    } else if (parts[1] === 'methodology') {
+      crumbs.push({ label: 'METHODOLOGY', to: '/app/methodology' })
     } else if (parts[1] === 'settings') {
       crumbs.push({ label: 'SETTINGS', to: '/app/settings' })
     }
@@ -86,8 +88,18 @@ export function Topbar({ onOpenCommandPalette }) {
         })}
       </div>
 
-      {/* ── Right: Controls (Time window, Command Palette hint, Console toggle) */}
+      {/* ── Right: Controls (Honesty badge, Time window, Command Palette hint, Console toggle) */}
       <div className="flex items-center gap-3">
+        {/* Prototype Honesty Chip */}
+        <Link
+          to="/app/methodology"
+          className="hidden lg:flex items-center gap-1.5 px-2 py-0.5 border border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-300 text-[10px] font-mono uppercase tracking-wider rounded-[2px] hover:bg-amber-500/20 transition-colors"
+          title="Built for Government College of Engineering Kalahandi. Telemetry generated using simplified PV physics model; live campus sensors not connected."
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+          <span>ACADEMIC PROTOTYPE · SIMULATED TELEMETRY</span>
+        </Link>
+
         {/* Time Window Selector (Today / 7D / 30D) */}
         <div className="flex items-center border border-line dark:border-console-line bg-paper-2 dark:bg-console-bg rounded-[2px] p-0.5">
           {['Today', '7D', '30D'].map((window) => (

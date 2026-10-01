@@ -10,13 +10,17 @@ import { cn } from '../lib/cn.js'
 
 const STATUS_COLUMNS = [
   { id: 'open', label: 'Open' },
-  { id: 'dispatched', label: 'Dispatched' },
+  { id: 'assigned', label: 'Assigned' },
   { id: 'in_progress', label: 'In Progress' },
   { id: 'resolved', label: 'Resolved' },
   { id: 'verified', label: 'Verified' },
 ]
 
-const TECHNICIANS = ['R. Meena', 'S. Choudhary', 'A. Rao']
+const TECHNICIANS = [
+  'Campus Electrician',
+  'Electrical Lab Assistant',
+  'Maintenance Incharge',
+]
 
 // Helper to compute initials chip
 function getInitials(name) {
@@ -174,20 +178,20 @@ export default function WorkOrders() {
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
-    link.setAttribute('download', `kiran_work_orders_${new Date().toISOString().slice(0, 10)}.csv`)
+    link.setAttribute('download', `solarpower_maintenance_actions_${new Date().toISOString().slice(0, 10)}.csv`)
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
-    pushToast(`Exported ${filteredTickets.length} tickets to CSV.`)
+    pushToast(`Exported ${filteredTickets.length} maintenance actions to CSV.`)
   }
 
   return (
     <div className="space-y-6">
       {/* Editorial Header */}
       <PageHeader
-        eyebrow="Decision Support · CMMS Work Queue"
-        title="Work Orders"
-        description="Prescriptive maintenance pipeline. Drag tasks across lifecycle stages or click to inspect diagnostics, assign technicians, and audit recovery."
+        eyebrow="Campus Facility Maintenance · Action Queue"
+        title="Maintenance Actions"
+        description="Prescriptive maintenance pipeline for GCE Kalahandi campus solar rooftop zones. Review diagnostics, assign campus maintenance personnel, and audit restoration."
       >
         <Button variant="secondary" size="md" onClick={handleExportCsv}>
           Export CSV ({filteredTickets.length})

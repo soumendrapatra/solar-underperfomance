@@ -36,7 +36,7 @@ export default function Ingest() {
     })
   }
 
-  // Generate and download a sample 7-day CSV for Bhadla
+  // Generate and download a sample 7-day CSV for GCE Kalahandi Campus Solar
   const handleDownloadSampleCsv = () => {
     const rows = []
     const baseDate = new Date('2026-06-15T06:00:00+05:30')
@@ -46,16 +46,16 @@ export default function Ingest() {
       const isDay = hour >= 6.0 && hour <= 18.5
       const poa = isDay ? Math.round(920 * Math.sin(((hour - 6.0) / 12.5) * Math.PI)) : 0
       const tamb = isDay ? Math.round((32 + (hour - 6) * 1.1) * 10) / 10 : 28.5
-      const pac = isDay ? Math.round(poa * 10.4) : 0
-      const heatsink = isDay ? Math.round(45 + (pac / 10000) * 32) : 32
+      const pac = isDay ? Math.round((poa / 1000) * 45) : 0
+      const heatsink = isDay ? Math.round(45 + (pac / 45) * 28) : 32
       rows.push({
         timestamp: t.toISOString(),
         poa_w_m2: poa,
         t_amb_c: tamb,
         pac_kw: pac,
         heatsink_temp_c: heatsink,
-        string_01_a: isDay ? 12.8 : 0,
-        string_02_a: isDay ? 12.7 : 0,
+        string_01_a: isDay ? 8.6 : 0,
+        string_02_a: isDay ? 8.5 : 0,
       })
     }
 
@@ -64,19 +64,19 @@ export default function Ingest() {
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
-    link.setAttribute('download', 'bhadla_sample_scada_export.csv')
+    link.setAttribute('download', 'gce_kalahandi_campus_solar_telemetry.csv')
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
-    pushToast('Sample Bhadla SCADA CSV generated and downloaded.')
+    pushToast('Sample GCE Kalahandi campus solar CSV generated and downloaded.')
   }
 
   return (
     <div className="space-y-6">
       <PageHeader
         eyebrow="Telemetry Pipeline · PapaParse Integration"
-        title="SCADA Data Ingestion"
-        description="Ingest plant SCADA telemetry, weather station CSV files, or combiner box string monitor exports into the Kiran diagnostic crucible."
+        title="Telemetry Data Ingestion"
+        description="Ingest campus solar inverter telemetry, weather station CSV files, or string monitor exports into the SolarPower diagnostic crucible."
       >
         <Button variant="secondary" size="md" onClick={handleDownloadSampleCsv}>
           Download Sample CSV

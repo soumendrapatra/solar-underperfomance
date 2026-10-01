@@ -15,6 +15,7 @@ const DataHealth = lazy(() => import('./pages/DataHealth.jsx'))
 const Model      = lazy(() => import('./pages/Model.jsx'))
 const Ingest     = lazy(() => import('./pages/Ingest.jsx'))
 const Settings   = lazy(() => import('./pages/Settings.jsx'))
+const Methodology = lazy(() => import('./pages/Methodology.jsx'))
 const KitPage    = lazy(() => import('./pages/KitPage.jsx'))
 const NotFound   = lazy(() => import('./pages/NotFound.jsx'))
 
@@ -39,6 +40,7 @@ export default function App() {
                 <Route path="lab" element={<Lab />} />
                 <Route path="data-health" element={<DataHealth />} />
                 <Route path="model" element={<Model />} />
+                <Route path="methodology" element={<Methodology />} />
                 <Route path="ingest" element={<Ingest />} />
                 <Route path="settings" element={<Settings />} />
                 {/* Hidden dev page — component library review */}

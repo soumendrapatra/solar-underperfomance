@@ -58,39 +58,39 @@ const ML_CONTRIBUTIONS = {
 const RULE_EVIDENCE = {
   thermal_derating: [
     'Inverter heatsink temperature sustained > 78.5 °C for 42 consecutive minutes during peak noon window.',
-    'AC active generation clamped at exactly 850 kWac while digital twin expected DC capacity exceeded 1,020 kW.',
-    'Fleet peer inverters (INV-01, INV-02) operated at 1,180 kWac nominal without triggering thermal protection.',
-    'Plateau onset strictly correlates with ambient temperature rising above 39.0 °C and blower fan RPM alert.',
+    'AC active generation clamped at exactly 17.5 kWac while digital twin expected DC capacity exceeded 21.0 kW.',
+    'Peer campus inverters (INV-A1, INV-W1) operated at nominal capacity without triggering thermal protection.',
+    'Plateau onset strictly correlates with ambient solar radiation and restricted rooftop ventilation.',
   ],
   soiling: [
-    'Fleet daily PR decreased monotonically by -0.42 % per day over 7 consecutive clear sky monitoring periods.',
-    'Uniform yield gap observed symmetrically across all 8 central inverters with cross-inverter variance < 1.2 %.',
-    'Soiling derating integral reaches 4.8 % overall generation loss; economic payback threshold for robotic wash reached.',
+    'Main Academic Block daily PR decreased monotonically by -0.45 % per day over 7 consecutive clear sky monitoring periods.',
+    'Uniform yield gap observed symmetrically across all strings with cross-string variance < 1.2 %.',
+    'Soiling derating integral reaches 6.2 % overall generation loss; economic payback reached for manual hose wash.',
     'Transients excluded from slope estimation; fit confidence R² = 0.96.',
   ],
   shading: [
     'Repeatable localized generation depression occurring strictly between 07:30 and 09:15 IST under low solar elevation.',
-    'Loss profile mirrors geometric shadow angle of adjacent perimeter transmission tower and boundary tree line.',
+    'Loss profile mirrors geometric shadow angle of adjacent workshop roof parapet wall and high water tank.',
     'Clear-sky residual signature reproduces identically across all 7 monitored days with < 1.5 % deviation.',
-    'String current mismatch isolated to bottom module tiers on Combiner Box SCB-01.',
+    'String current mismatch isolated to bottom module row facing east.',
   ],
   string_fault: [
-    'Combiner Box SCB-02 string 07 measured current dropped to 0.0 A while parallel strings delivered 12.8 A nominal.',
+    'Department Roof string 03 measured current dropped to 0.0 A while parallel strings delivered 8.6 A nominal.',
     'Fault condition persisted for 100% of daylight samples with POA > 200 W/m² (total 1,420 minutes).',
-    'Open-circuit condition isolates to a blown 15A gPV inline fuse or disconnected DC branch connector.',
+    'Open-circuit condition isolates to a blown 15A gPV inline fuse or disconnected MC4 branch connector.',
     'DC voltage on string matches array open circuit potential Voc = 48.2 V, verifying string continuity is intact.',
   ],
   curtailment: [
-    'Total plant export pinned at 7,500 kWac flat ceiling from 12:00 to 14:15 IST per SLDC dispatch order.',
-    'All 8 central inverters simultaneously capped output proportionally without individual fault alerts.',
-    'Zero internal equipment degradation; loss categorized strictly as Grid Curtailment (Non-equipment ticket).',
+    'Total campus solar export pinned at flat ceiling from 12:00 to 14:15 IST per campus substation limit.',
+    'All rooftop inverters simultaneously capped output proportionally without individual fault alerts.',
+    'Zero internal equipment degradation; loss categorized strictly as Institutional Curtailment (Non-equipment ticket).',
     'Full unconstrained generation restored instantly upon release of setpoint limit.',
   ],
   sensor_drift: [
-    'Field pyranometer POA reads 8.1 % higher than fleet-implied irradiance back-calculated from unclipped inverters.',
-    'Inverters agree with each other with coefficient of variation CV = 0.021, proving plant generation is normal.',
+    'Rooftop pyranometer POA reads 7.4 % higher than fleet-implied irradiance back-calculated from unclipped inverters.',
+    'Campus inverters agree with each other with coefficient of variation CV = 0.021, proving plant generation is normal.',
     'Pyranometer discrepancy persists identically across morning and afternoon ramps, ruling out physical shading.',
-    'Auto-calibration factor of 0.925 applied to prevent false soiling or inverter underperformance ticketing.',
+    'Auto-calibration factor of 0.931 applied to prevent false soiling or inverter underperformance ticketing.',
   ],
 }
 
@@ -98,9 +98,9 @@ const RULE_EVIDENCE = {
 const RULED_OUT_MODES = {
   thermal_derating: [
     { mode: 'Cloud Transient', score: 0.04, reason: 'Loss persists on stable clear-sky samples; Stein Variability Index VI = 1.08 < 1.30.' },
-    { mode: 'Uniform Soiling', score: 0.12, reason: 'Loss is localized to INV-04; peer inverters maintain nominal PR > 81.5%.' },
-    { mode: 'Grid Curtailment', score: 0.07, reason: 'No dispatch limit active; adjacent inverters exporting at full unclipped capacity.' },
-    { mode: 'Pyranometer Drift', score: 0.02, reason: 'WMS sensor agrees with clear-sky digital twin model within ±0.7%.' },
+    { mode: 'Uniform Soiling', score: 0.12, reason: 'Loss is localized to Library INV-L1; peer campus inverters maintain nominal PR > 81.5%.' },
+    { mode: 'Grid Curtailment', score: 0.07, reason: 'No campus transformer limit active; adjacent building inverters exporting normally.' },
+    { mode: 'Pyranometer Drift', score: 0.02, reason: 'Campus weather sensor agrees with clear-sky digital twin model within ±0.7%.' },
   ],
   soiling: [
     { mode: 'Inverter Derating', score: 0.05, reason: 'Heatsink temperatures remain < 64 °C; zero power plateauing detected.' },
@@ -115,13 +115,13 @@ const RULED_OUT_MODES = {
   ],
   string_fault: [
     { mode: 'Inverter Thermal Derating', score: 0.02, reason: 'Heatsink temperature is optimal (56 °C); loss is isolated to single string.' },
-    { mode: 'Uniform Soiling', score: 0.06, reason: '47 out of 48 string channels operate at 100% nominal current.' },
+    { mode: 'Uniform Soiling', score: 0.06, reason: 'Parallel string channels operate at 100% nominal current.' },
     { mode: 'Cloud Transient', score: 0.01, reason: 'Current drop is 100% sustained and does not recover during peak clear sky.' },
   ],
   curtailment: [
     { mode: 'Inverter Thermal Derating', score: 0.04, reason: 'Heatsink temperatures < 62 °C; all inverters throttled simultaneously.' },
     { mode: 'String Open Circuit', score: 0.02, reason: 'All combiner box string currents remain identical and balanced.' },
-    { mode: 'Uniform Soiling', score: 0.05, reason: 'Power drop matches external SLDC grid export limit schedule.' },
+    { mode: 'Uniform Soiling', score: 0.05, reason: 'Power drop matches external substation transformer ceiling schedule.' },
   ],
   sensor_drift: [
     { mode: 'Uniform Soiling', score: 0.09, reason: 'Inverters produce full expected kWh per square meter of actual sun.' },
@@ -157,11 +157,11 @@ export default function Diagnosis() {
     let targetMode = 'thermal_derating'
     if (diagId) {
       if (diagId.includes('soiling')) targetMode = 'soiling'
-      else if (diagId.includes('derating') || diagId.includes('thermal')) targetMode = 'thermal_derating'
-      else if (diagId.includes('string')) targetMode = 'string_fault'
+      else if (diagId.includes('derating') || diagId.includes('thermal') || diagId.includes('library')) targetMode = 'thermal_derating'
+      else if (diagId.includes('string') || diagId.includes('department')) targetMode = 'string_fault'
       else if (diagId.includes('curtailment')) targetMode = 'curtailment'
       else if (diagId.includes('drift') || diagId.includes('sensor')) targetMode = 'sensor_drift'
-      else if (diagId.includes('shading')) targetMode = 'shading'
+      else if (diagId.includes('shading') || diagId.includes('workshop')) targetMode = 'shading'
     }
 
     // Try finding in tickets or anomalies
@@ -172,53 +172,53 @@ export default function Diagnosis() {
 
     // Prescription text
     let prescriptionText = ''
-    let assetId = 'INV-04'
-    let lostRevenue = 8946
-    let lostKWh = 2840
+    let assetId = 'INV-L1'
+    let lostRevenue = 1820
+    let lostKWh = 280
     let priority = 'P1'
 
     if (baseMode === 'thermal_derating') {
-      assetId = 'INV-04'
-      lostRevenue = 8946
-      lostKWh = 2840
+      assetId = 'Library Hall (INV-L1)'
+      lostRevenue = 1820
+      lostKWh = 280
       priority = 'P1'
       prescriptionText =
-        'Generation is 18.2 % below expected. Likely causes: Inverter Thermal Derating on INV-04. Recommended action: Inspect blower fan #2 and clean intake air filters.'
+        'Generation is 19.4 % below expected on Library Hall (INV-L1). Likely cause: Inverter Thermal Derating due to dust on heat-sink fins and enclosure thermal stagnation. Recommended action: Direct Campus Electrician to inspect inverter ventilation louvers and clean heatsink fins.'
     } else if (baseMode === 'soiling') {
-      assetId = 'Fleet Array (All 8 Inverters)'
-      lostRevenue = 14820
-      lostKWh = 4700
+      assetId = 'Main Academic Block (INV-A1 / A2)'
+      lostRevenue = 1430
+      lostKWh = 220
       priority = 'P2'
       prescriptionText =
-        'Generation is 6.8 % below expected. Likely causes: Uniform desert soiling with -0.42 %/day PR slope. Recommended action: Dispatch robotic wet cleaning for Block C rows 1-24.'
+        'Generation is 6.2 % below expected on Main Academic Block. Likely cause: Campus dust accumulation with -0.45 %/day PR slope. Recommended action: Schedule manual rooftop panel washing before 08:30 AM with maintenance staff.'
     } else if (baseMode === 'string_fault') {
-      assetId = 'INV-03 / SCB-02'
-      lostRevenue = 4120
-      lostKWh = 1310
+      assetId = 'Department Roof (INV-D1 / String 03)'
+      lostRevenue = 980
+      lostKWh = 150
       priority = 'P1'
       prescriptionText =
-        'Generation is 4.3 % below expected. Likely causes: String Open Circuit on SCB-02 string 07 (0.0 A vs 12.8 A expected). Recommended action: Replace blown 15A 1000V gPV fuse.'
+        'Generation is 4.8 % below expected on Department Roof. Likely cause: String Open Circuit / blown fuse on String 03 (0.0 A vs 8.6 A expected). Recommended action: Electrical Lab Assistant to inspect MC4 connectors and replace inline fuse.'
     } else if (baseMode === 'shading') {
-      assetId = 'INV-01 / SCB-01'
-      lostRevenue = 2940
-      lostKWh = 930
+      assetId = 'Mechanical Workshop (INV-W1)'
+      lostRevenue = 650
+      lostKWh = 100
       priority = 'P3'
       prescriptionText =
-        'Generation is 2.9 % below expected. Likely causes: Fixed geometric partial shading from transmission corridor. Recommended action: Confirm module bypass diode health; no hardware defect.'
+        'Generation is 3.5 % below expected on Mechanical Workshop. Likely cause: Morning shadow cast by adjacent workshop roof parapet wall. Recommended action: Confirm module bypass diode operation; no physical maintenance required.'
     } else if (baseMode === 'curtailment') {
-      assetId = 'Grid Interconnect (Substation 33kV)'
-      lostRevenue = 12400
-      lostKWh = 3940
+      assetId = 'Campus Feeder Interconnect'
+      lostRevenue = 2100
+      lostKWh = 320
       priority = 'P2'
       prescriptionText =
-        'Generation is 14.5 % below expected. Likely causes: SLDC Grid Export Curtailment setpoint capped at 7.5 MWac. Recommended action: Log curtailment event for PPA deeming compensation.'
+        'Generation is 12.0 % below expected across campus array. Likely cause: Institutional grid feed limit imposed during low campus load window. Recommended action: Log curtailment event in college electrical log.'
     } else {
-      assetId = 'WMS Secondary Pyranometer #1'
+      assetId = 'Rooftop Weather Station Sensor #1'
       lostRevenue = 0
       lostKWh = 0
       priority = 'P3'
       prescriptionText =
-        'Generation is 0.0 % below expected. Likely causes: Pyranometer Calibration Drift of +8.1 % vs fleet baseline. Recommended action: Recalibrate secondary WMS thermopile pyranometer.'
+        'Generation is 0.0 % below expected. Likely cause: Pyranometer sensor calibration drift (+7.4 % vs back-calculated array irradiance). Recommended action: Clean sensor glass dome and verify zero-offset calibration with EE lab equipment.'
     }
 
     return {
@@ -521,7 +521,7 @@ export default function Diagnosis() {
             <div className="space-y-1">
               <span className="label text-ink text-[10px]">DATA INTEGRITY &amp; CONFIDENCE PENALTY AUDIT</span>
               <p className="font-sans text-xs text-ink-2 leading-relaxed">
-                SCADA completeness: <span className="font-mono text-ink font-medium">99.6%</span>. Imputed gaps:{' '}
+                Simulated telemetry completeness: <span className="font-mono text-ink font-medium">99.6%</span>. Imputed gaps:{' '}
                 <span className="font-mono text-ink font-medium">{anomaly.imputedPct}%</span> (forward-filled &le;15m). Transient
                 samples excluded: <span className="font-mono text-ink font-medium">{anomaly.transientExcludedPct}%</span>. Confidence
                 penalized by -4.2% for non-stationary irradiance. Net diagnostic confidence remains{' '}
@@ -546,16 +546,16 @@ export default function Diagnosis() {
                 <span className="text-ink">{activePlant.name}</span>
               </div>
               <div>
-                <span className="text-ink-2 text-[10px] block">Position</span>
-                <span className="text-ink">Block C · Pad 02</span>
+                <span className="text-ink-2 text-[10px] block">Installation</span>
+                <span className="text-ink">Rooftop Mount</span>
               </div>
               <div>
                 <span className="text-ink-2 text-[10px] block">Hardware Model</span>
-                <span className="text-ink truncate">SMA Central 1250-CP</span>
+                <span className="text-ink truncate">Commercial String Inverter</span>
               </div>
               <div>
                 <span className="text-ink-2 text-[10px] block">Commissioned</span>
-                <span className="text-ink">14 Nov 2021</span>
+                <span className="text-ink">15 Aug 2023</span>
               </div>
             </div>
           </div>
@@ -606,7 +606,7 @@ export default function Diagnosis() {
 
           {/* Field Checklist & Safety Card */}
           <div className="border border-line bg-paper p-4 space-y-3">
-            <span className="label text-ink font-medium block">Field Technician Protocol</span>
+            <span className="label text-ink font-medium block">Campus Maintenance Protocol</span>
 
             {/* Tools required */}
             <div className="space-y-1">
@@ -665,7 +665,7 @@ export default function Diagnosis() {
       <Drawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        title="Dispatch CMMS Work Order"
+        title="Dispatch Maintenance Work Order"
         width="w-[480px]"
       >
         <div className="space-y-4 text-xs font-sans">
@@ -688,9 +688,9 @@ export default function Diagnosis() {
           <div className="space-y-1 font-mono">
             <span className="label text-ink-2 text-[10px]">Assignee Lead</span>
             <select className="w-full bg-paper border border-line p-2 text-xs text-ink">
-              <option>R. Meena (HV Electrical Lead)</option>
-              <option>S. Choudhary (Array Field Technician)</option>
-              <option>A. Rao (Inverter Specialist)</option>
+              <option>Campus Electrician</option>
+              <option>Electrical Lab Assistant</option>
+              <option>Maintenance Incharge</option>
             </select>
           </div>
 

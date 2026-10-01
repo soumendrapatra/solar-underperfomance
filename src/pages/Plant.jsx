@@ -28,7 +28,7 @@ export default function Plant() {
   const [drawerOpen, setDrawerOpen] = useState(false)
 
   // Resolve active plant
-  const activePlantId = plantId || selectedPlantId || 'bhadla-block-c'
+  const activePlantId = plantId || selectedPlantId || 'academic-block'
   const plant = portfolio.find((p) => p.id === activePlantId) || portfolio[0]
 
   useEffect(() => {
@@ -53,13 +53,16 @@ export default function Plant() {
     navigate(`/app/diagnosis/${issue.mode || issue.id || 'thermal_derating'}`)
   }
 
+  const numInverters = plant?.inverters?.length || 2
+  const totalStrings = plant?.inverters?.reduce((sum, inv) => sum + (inv.combinerBoxes?.reduce((s, cb) => s + (cb.strings?.length || 0), 0) || 0), 0) || 12
+
   return (
     <div className="space-y-8 max-w-7xl mx-auto pb-12">
       {/* ── 1. Header: Name, Capacity, Location, Weather Strip ───────── */}
       <PageHeader
-        eyebrow={`${plant?.location?.region?.toUpperCase() || 'RAJASTHAN'} · ${(plant?.dcCapacityKwp / 1000).toFixed(1)} MWp DC / ${(plant?.acCapacityKw / 1000).toFixed(0)} MWac`}
-        title={plant?.name || 'Plant'}
-        description={`Grid connection at 33 kV pooling substation. 8 central inverters, 32 combiner boxes, 384 string channels.`}
+        eyebrow={`GOVT. COLLEGE OF ENGINEERING KALAHANDI · ${plant?.dcCapacityKwp || 50} kWp DC / ${plant?.acCapacityKw || 45} kWac`}
+        title={plant?.name || 'Building Solar Performance'}
+        description={plant?.description || `Campus rooftop solar array. ${numInverters} string inverters, ${totalStrings} monitored string channels connected to campus distribution board.`}
       >
         <WeatherStrip weather={weatherSnapshot} />
       </PageHeader>
@@ -128,7 +131,7 @@ export default function Plant() {
         {plantModes.length === 0 ? (
           <Card>
             <div className="p-8 text-center text-xs font-sans text-ink-2 dark:text-console-text/60">
-              No anomalies diagnosed for this plant. All strings, combiners, and inverters operating within normal performance envelopes.
+              No anomalies diagnosed for this campus zone. All strings, combiners, and inverters operating within normal performance envelopes.
             </div>
           </Card>
         ) : (
@@ -166,7 +169,7 @@ export default function Plant() {
 
                   <div className="pt-3 border-t border-line/60 dark:border-console-line/60 flex items-center justify-between text-xs">
                     <div>
-                      <span className="font-mono text-[10px] text-ink-2 dark:text-console-text/50 block">EST. REVENUE LOSS</span>
+                      <span className="font-mono text-[10px] text-ink-2 dark:text-console-text/50 block">EST. VALUE LOSS</span>
                       <span className="font-mono font-medium text-ink dark:text-console-text tabular-nums">
                         {formatCurrency(matchingTicket?.lostRevenue || 1480)}
                       </span>

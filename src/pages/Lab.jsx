@@ -128,50 +128,54 @@ export default function Lab() {
       setTransientIntensity(2.2)
     } else if (presetKey === 'soiling_plus_derating') {
       setSoilingEnabled(true)
-      setSoilingRate(0.42)
+      setSoilingRate(0.45)
       setShadingEnabled(false)
-      setDeratingEnabled(true)
-      setDeratingCapKw(850)
+      setDeratingEnabled(false)
       setOpenStringsEnabled(false)
       setDiodeEnabled(false)
       setCurtailmentEnabled(false)
       setDriftEnabled(false)
       setWeatherType('scattered')
       setTransientIntensity(1.1)
-    } else if (presetKey === 'string_faults_block_b') {
+    } else if (presetKey === 'shading_morning') {
+      setSoilingEnabled(false)
+      setShadingEnabled(true)
+      setShadingStart(7.5)
+      setShadingEnd(9.5)
+      setDeratingEnabled(false)
+      setOpenStringsEnabled(false)
+      setDiodeEnabled(false)
+      setCurtailmentEnabled(false)
+      setDriftEnabled(false)
+      setWeatherType('clear')
+      setTransientIntensity(0.3)
+    } else if (presetKey === 'inverter_thermal_derating') {
       setSoilingEnabled(false)
       setShadingEnabled(false)
-      setDeratingEnabled(false)
-      setOpenStringsEnabled(true)
-      setOpenStringsCount(2)
-      setDiodeEnabled(true)
-      setDiodeCount(1)
+      setDeratingEnabled(true)
+      setDeratingCapKw(18)
+      setDeratingTempThreshold(78)
+      setOpenStringsEnabled(false)
+      setDiodeEnabled(false)
       setCurtailmentEnabled(false)
       setDriftEnabled(false)
       setWeatherType('clear')
       setTransientIntensity(0.4)
-    } else if (presetKey === 'curtailment_afternoon') {
+    } else if (presetKey === 'string_fault_single') {
       setSoilingEnabled(false)
       setShadingEnabled(false)
       setDeratingEnabled(false)
-      setOpenStringsEnabled(false)
+      setOpenStringsEnabled(true)
+      setOpenStringsCount(1)
       setDiodeEnabled(false)
-      setCurtailmentEnabled(true)
-      setCurtailmentLimitMw(7.5)
+      setCurtailmentEnabled(false)
       setDriftEnabled(false)
       setWeatherType('clear')
       setTransientIntensity(0.3)
-    } else if (presetKey === 'sensor_drift_wms1') {
-      setSoilingEnabled(false)
-      setShadingEnabled(false)
-      setDeratingEnabled(false)
-      setOpenStringsEnabled(false)
-      setDiodeEnabled(false)
-      setCurtailmentEnabled(false)
-      setDriftEnabled(true)
-      setDriftOffsetPct(8.1)
-      setWeatherType('clear')
-      setTransientIntensity(0.5)
+    } else {
+      setSoilingEnabled(true)
+      setSoilingRate(0.35)
+      setWeatherType('scattered')
     }
   }
 
@@ -252,24 +256,27 @@ export default function Lab() {
           detected,
           precision,
           recall,
-          estimatedRevenueLoss: detected.length * 4820,
+          estimatedRevenueLoss: detected.length * 1280,
           prescriptions: detected.map((d) => {
             if (d.mode === 'thermal_derating') {
-              return 'Inverter heatsink derating detected on INV-04. Clean external blower fan #2 and air mesh filters.'
+              return 'Inverter heatsink derating detected on Library Hall (INV-L1). Direct Campus Electrician to inspect louvers and clear dust from heatsink fins.'
             }
             if (d.mode === 'uniform_soiling') {
-              return 'Uniform array soiling with monotonic PR decay (-0.42%/d). Dispatch robotic wash for Block C.'
+              return 'Uniform dust accumulation with monotonic PR decay (-0.45%/d) on Main Academic Block. Schedule manual rooftop washing.'
             }
             if (d.mode === 'string_open_circuit') {
-              return 'Open circuit on SCB-02 string 07 (0.0 A). Inspect and replace blown 15A inline gPV fuse.'
+              return 'Open circuit on Department Roof string 03 (0.0 A vs 8.6 A expected). Lab assistant to inspect MC4 connectors and replace inline fuse.'
             }
             if (d.mode === 'bypass_diode') {
-              return 'Sub-array voltage drop of 33% on string 04. Check thermal bypass diode box.'
+              return 'Sub-array voltage drop of 33% on string 04. Check module junction bypass diode.'
+            }
+            if (d.mode === 'partial_shading') {
+              return 'Morning localized partial shading on Mechanical Workshop from parapet wall. No hardware fault.'
             }
             if (d.mode === 'grid_curtailment') {
-              return 'External SLDC dispatch curtailment setpoint active. No equipment ticket required.'
+              return 'Campus substation transformer export ceiling active. Institutional power curtailment logged.'
             }
-            return 'Secondary WMS pyranometer calibration drift detected (+8.1%). Recalibrate thermopile sensor.'
+            return 'Rooftop weather pyranometer calibration drift detected (+7.4%). Clean dome and verify with EE lab sensor.'
           }),
         })
 
@@ -359,7 +366,7 @@ export default function Lab() {
               {/* Plant & Seed Row */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <span className="text-ink-2 text-[10px] uppercase">Target Asset</span>
+                  <span className="text-ink-2 text-[10px] uppercase">Target Campus Roof Zone</span>
                   <select
                     value={selectedPlantId}
                     onChange={(e) => setSelectedPlantId(e.target.value)}

@@ -9,7 +9,7 @@
 
 import { create } from 'zustand'
 
-const STORAGE_KEY = 'kiran_work_orders'
+const STORAGE_KEY = 'solarpower_work_orders'
 
 function loadFromStorage() {
   if (typeof window === 'undefined') return []

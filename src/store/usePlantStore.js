@@ -9,17 +9,18 @@ import { createPortfolio, createPlant } from '../engine/simulator/plantFactory.j
 import { engineClient } from '../workers/engineClient.js'
 import { useWorkOrderStore } from './useWorkOrderStore.js'
 
-// Initial scenarios mapped across the 4 portfolio assets
+// Initial scenarios mapped across the 5 GCE Kalahandi campus solar zones
 export const DEFAULT_PORTFOLIO_SCENARIOS = {
-  'bhadla-block-c': 'everything_bad_week',
-  'pavagada-p4': 'string_faults_block_b',
-  'charanka-rooftop-cluster': 'curtailment_afternoon',
-  'kurnool-east': 'sensor_drift_wms1',
+  'academic-block': 'soiling_plus_derating',
+  'mechanical-workshop': 'shading_morning',
+  'library-hall': 'inverter_thermal_derating',
+  'extra-class-building': 'baseline_clear_week',
+  'department-roof-cluster': 'string_fault_single',
 }
 
 export const usePlantStore = create((set, get) => ({
   portfolio: createPortfolio(),
-  selectedPlantId: 'bhadla-block-c',
+  selectedPlantId: 'academic-block',
   telemetryCache: {},
   diagnoses: {},
   activeScenarios: { ...DEFAULT_PORTFOLIO_SCENARIOS },
@@ -58,14 +59,14 @@ export const usePlantStore = create((set, get) => ({
         const telemetry = await engineClient.simulate(scenario, {
           plant,
           days: 7,
-          includeStrings: plant.id === 'bhadla-block-c', // Full string detail for default active plant
+          includeStrings: true, // Small-scale campus arrays can include full string detail
         })
 
         telemetryCache[plant.id] = telemetry
 
         // 2. Run initial diagnosis
         const diagnosis = await engineClient.diagnose(plant, telemetry, {
-          tariff: plant.tariffInrPerKwh || 3.15,
+          tariff: plant.tariffInrPerKwh || 6.50,
         })
 
         diagnoses[plant.id] = diagnosis

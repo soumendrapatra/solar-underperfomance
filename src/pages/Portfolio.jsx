@@ -64,7 +64,7 @@ export default function Portfolio() {
     setHasAnimatedStagger(true)
   }, [])
 
-  // Aggregate fleet-wide metrics
+  // Aggregate campus-wide metrics
   let totalCapacityKwp = 0
   let totalTodayActKwh = 0
   let totalTodayExpKwh = 0
@@ -87,10 +87,6 @@ export default function Portfolio() {
   openP1Count = tickets.filter((t) => t.priority === 'P1' && t.status !== 'verified').length
 
   const fleetPr = totalTodayExpKwh > 0 ? totalTodayActKwh / totalTodayExpKwh : 0.792
-  const fleetCapacityMwp = (totalCapacityKwp / 1000).toFixed(1)
-  const todayActMwh = (totalTodayActKwh / 1000).toFixed(1)
-  const todayExpMwh = (totalTodayExpKwh / 1000).toFixed(1)
-  const lost7dMwh = (totalLost7dKwh / 1000).toFixed(1)
 
   // Top 5 issues that need attention
   const openTickets = tickets
@@ -102,16 +98,16 @@ export default function Portfolio() {
     <div className="space-y-8 max-w-7xl mx-auto">
       {/* ── Page Header ─────────────────────────────────────────────── */}
       <PageHeader
-        eyebrow="FLEET INTELLIGENCE"
-        title="Utility Portfolio"
-        description="Real-time multi-asset digital twin monitoring, yield gap decomposition, and autonomous prescriptive work order generation."
+        eyebrow="CAMPUS SOLAR MONITORING"
+        title="Campus Overview"
+        description="Real-time rooftop solar digital twin monitoring, yield gap decomposition, and prescriptive fault diagnosis for Government College of Engineering Kalahandi."
       >
         <Button
           variant="secondary"
           size="sm"
           onClick={() => navigate('/app/work-orders')}
         >
-          View CMMS ({tickets.filter((t) => t.status !== 'verified').length})
+          Maintenance Tasks ({tickets.filter((t) => t.status !== 'verified').length})
         </Button>
       </PageHeader>
 
@@ -119,24 +115,24 @@ export default function Portfolio() {
       <section className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
         <Stat
           label="CAPACITY"
-          value={parseFloat(fleetCapacityMwp)}
-          unit="MWp"
-          decimals={1}
+          value={totalCapacityKwp}
+          unit="kWp"
+          decimals={0}
         />
         <Stat
           label="TODAY GEN"
-          value={parseFloat(todayActMwh)}
-          unit="MWh"
+          value={parseFloat(totalTodayActKwh.toFixed(1))}
+          unit="kWh"
           decimals={1}
         />
         <Stat
           label="EXP GEN"
-          value={parseFloat(todayExpMwh)}
-          unit="MWh"
+          value={parseFloat(totalTodayExpKwh.toFixed(1))}
+          unit="kWh"
           decimals={1}
         />
         <Stat
-          label="FLEET PR"
+          label="CAMPUS PR"
           value={parseFloat((fleetPr * 100).toFixed(1))}
           unit="%"
           decimals={1}
@@ -145,13 +141,13 @@ export default function Portfolio() {
         />
         <Stat
           label="LOST GEN 7D"
-          value={parseFloat(lost7dMwh)}
-          unit="MWh"
+          value={parseFloat(totalLost7dKwh.toFixed(1))}
+          unit="kWh"
           decimals={1}
           deltaPositiveIsGood={false}
         />
         <Stat
-          label="REV AT RISK 7D"
+          label="VAL AT RISK 7D"
           value={totalRevenueAtRiskInr}
           unit="INR"
           decimals={0}
@@ -171,7 +167,7 @@ export default function Portfolio() {
         <div className="flex items-center justify-between">
           <span className="label text-ink dark:text-console-text">OPERATIONAL ASSETS</span>
           <span className="label text-ink-2 dark:text-console-text/60">
-            {portfolio.length} PLANTS REPORTING
+            {portfolio.length} ZONES REPORTING
           </span>
         </div>
 
@@ -179,19 +175,19 @@ export default function Portfolio() {
           <table className="w-full border-collapse text-left text-xs">
             <thead>
               <tr className="border-b border-line dark:border-console-line bg-paper-2/40 dark:bg-console-panel">
-                <th className="py-2.5 px-4 label text-ink-2 dark:text-console-text/60 font-normal">PLANT NAME</th>
-                <th className="py-2.5 px-3 label text-ink-2 dark:text-console-text/60 font-normal">STATE</th>
+                <th className="py-2.5 px-4 label text-ink-2 dark:text-console-text/60 font-normal">BUILDING ZONE</th>
+                <th className="py-2.5 px-3 label text-ink-2 dark:text-console-text/60 font-normal">ROOF / TILT</th>
                 <th className="py-2.5 px-3 label text-ink-2 dark:text-console-text/60 font-normal text-right">CAPACITY</th>
                 <th className="py-2.5 px-3 label text-ink-2 dark:text-console-text/60 font-normal text-right">PR</th>
                 <th className="py-2.5 px-3 label text-ink-2 dark:text-console-text/60 font-normal text-right">LOSS %</th>
-                <th className="py-2.5 px-3 label text-ink-2 dark:text-console-text/60 font-normal">TOP ISSUE</th>
-                <th className="py-2.5 px-3 label text-ink-2 dark:text-console-text/60 font-normal text-right">REV AT RISK (7D)</th>
+                <th className="py-2.5 px-3 label text-ink-2 dark:text-console-text/60 font-normal">STATUS</th>
+                <th className="py-2.5 px-3 label text-ink-2 dark:text-console-text/60 font-normal text-right">VAL AT RISK (7D)</th>
                 <th className="py-2.5 px-4 label text-ink-2 dark:text-console-text/60 font-normal text-center">PR TREND (7D)</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                Array.from({ length: 4 }).map((_, i) => (
+                Array.from({ length: 5 }).map((_, i) => (
                   <tr key={i} className="border-b border-line/60 dark:border-console-line/60">
                     <td className="py-3 px-4"><Skeleton className="h-4 w-36" /></td>
                     <td className="py-3 px-3"><Skeleton className="h-4 w-20" /></td>
@@ -207,10 +203,10 @@ export default function Portfolio() {
                 const diag = diagnoses[plant.id]
                 const summary = diag?.summary
                 const pr = summary?.plantPr ?? 0.81
-                const lostKwh = summary?.lostEnergyKwh ?? 1200
-                const expKwh = summary?.expectedEnergyKwh ?? 10000
+                const lostKwh = summary?.lostEnergyKwh ?? 120
+                const expKwh = summary?.expectedEnergyKwh ?? 1200
                 const lossPct = expKwh > 0 ? (lostKwh / expKwh) * 100 : 0
-                const revLoss = summary?.revenueLossInr ?? 4500
+                const revLoss = summary?.revenueLossInr ?? 780
 
                 // Top issue badge
                 const topTicket = tickets.find((t) => t.plantId === plant.id && t.status !== 'verified')
@@ -259,14 +255,14 @@ export default function Portfolio() {
                       </div>
                     </td>
 
-                    {/* State */}
-                    <td className="py-3 px-3 text-ink-2 dark:text-console-text/70">
-                      {plant.location?.region || 'Rajasthan'}
+                    {/* Tilt & Azimuth */}
+                    <td className="py-3 px-3 text-ink-2 dark:text-console-text/70 font-mono text-[11px]">
+                      {plant.tiltDeg}° tilt · {plant.azimuthDeg === 180 ? 'South' : plant.azimuthDeg > 180 ? 'SW' : 'SE'}
                     </td>
 
                     {/* Capacity */}
                     <td className="py-3 px-3 font-mono text-right tabular-nums text-ink dark:text-console-text">
-                      {(plant.dcCapacityKwp / 1000).toFixed(1)} MWp
+                      {plant.dcCapacityKwp} kWp
                     </td>
 
                     {/* PR */}
@@ -303,15 +299,15 @@ export default function Portfolio() {
         </Card>
       </section>
 
-      {/* ── "What Needs Attention": Top 5 Prioritized Diagnoses ─────── */}
+      {/* ── "Maintenance attention required": Top 5 Prioritized Diagnoses */}
       <section className="space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="label text-ink dark:text-console-text">WHAT NEEDS ATTENTION</span>
+            <span className="label text-ink dark:text-console-text">MAINTENANCE ATTENTION REQUIRED</span>
             <span className="w-1.5 h-1.5 rounded-full bg-fault animate-pulse" />
           </div>
           <span className="label text-ink-2 dark:text-console-text/60">
-            TOP PRIORITIZED ANOMALIES
+            TOP PRIORITIZED CAMPUS ANOMALIES
           </span>
         </div>
 

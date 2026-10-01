@@ -18,27 +18,27 @@ export default function DataHealth() {
   const telemetry = telemetryCache[selectedPlantId]
   const records = telemetry?.records || []
 
-  // Check if active plant has sensor drift condition (Kurnool East or injected)
-  const isDriftPlant = selectedPlantId === 'kurnool-east'
-  const driftFactor = isDriftPlant ? 1.081 : 1.002
-  const driftPct = isDriftPlant ? 8.1 : 0.2
+  // Check if active plant has sensor drift condition (Dept roof cluster or injected)
+  const isDriftPlant = selectedPlantId === 'dept-roof-cluster'
+  const driftFactor = isDriftPlant ? 1.074 : 1.002
+  const driftPct = isDriftPlant ? 7.4 : 0.2
 
   // Channel health definitions
   const channelData = useMemo(() => {
     return [
       {
         channel: 'POA Irradiance #1',
-        asset: 'WMS Primary (Tilt 25°)',
+        asset: 'Rooftop Primary Pyranometer (Tilt 20°)',
         completeness: 99.8,
         stuckWindows: 0,
-        driftStatus: isDriftPlant ? '+8.1% Drift' : 'Calibrated',
+        driftStatus: isDriftPlant ? '+7.4% Drift' : 'Calibrated',
         driftVariant: isDriftPlant ? 'medium' : 'ok',
-        healthScore: isDriftPlant ? 84 : 99,
+        healthScore: isDriftPlant ? 85 : 99,
         dailyCompleteness: [100, 100, 99.5, 100, 100, 99.2, 100],
       },
       {
         channel: 'POA Irradiance #2 (Secondary)',
-        asset: 'WMS Secondary Met Mast',
+        asset: 'Weather Station Pyranometer #2',
         completeness: 99.1,
         stuckWindows: 0,
         driftStatus: 'Calibrated',
@@ -48,7 +48,7 @@ export default function DataHealth() {
       },
       {
         channel: 'Back-of-Module Temp (BOM)',
-        asset: 'Array Zone C Row 14',
+        asset: 'Academic Block Array Row 2',
         completeness: 99.6,
         stuckWindows: 0,
         driftStatus: 'Calibrated',
@@ -57,8 +57,8 @@ export default function DataHealth() {
         dailyCompleteness: [100, 100, 100, 98.5, 100, 100, 99.0],
       },
       {
-        channel: 'Ambient Temperature & WS',
-        asset: 'WMS Met Mast 10m',
+        channel: 'Ambient Temperature & Wind',
+        asset: 'Campus Weather Station Mast',
         completeness: 100.0,
         stuckWindows: 0,
         driftStatus: 'Calibrated',
@@ -67,8 +67,8 @@ export default function DataHealth() {
         dailyCompleteness: [100, 100, 100, 100, 100, 100, 100],
       },
       {
-        channel: 'Inverter Active Power Pac (8x)',
-        asset: 'INV-01 to INV-08',
+        channel: 'Inverter Active Power Pac',
+        asset: 'String Inverters (INV-A1 to INV-D1)',
         completeness: 100.0,
         stuckWindows: 0,
         driftStatus: 'Calibrated',
@@ -77,13 +77,13 @@ export default function DataHealth() {
         dailyCompleteness: [100, 100, 100, 100, 100, 100, 100],
       },
       {
-        channel: 'Combiner Box String Currents',
-        asset: 'SCB-01 to SCB-04 (48 Strings)',
+        channel: 'Rooftop String Currents',
+        asset: 'Combiner Boxes (12 Strings)',
         completeness: 98.9,
-        stuckWindows: selectedPlantId === 'pavagada-p4' ? 1 : 0,
+        stuckWindows: selectedPlantId === 'dept-roof-cluster' ? 1 : 0,
         driftStatus: 'Calibrated',
         driftVariant: 'ok',
-        healthScore: selectedPlantId === 'pavagada-p4' ? 88 : 96,
+        healthScore: selectedPlantId === 'dept-roof-cluster' ? 88 : 96,
         dailyCompleteness: [98.2, 99.0, 99.0, 97.8, 100, 99.2, 98.8],
       },
     ]
@@ -96,16 +96,16 @@ export default function DataHealth() {
       list.push({
         id: 'drift-1',
         severity: 'high',
-        text: 'WMS pyranometer reading +8.1 % above fleet-implied irradiance consensus over 7 consecutive clear diurnal cycles.',
-        action: 'Engine action: Auto-calibrating POA series with factor 0.925 to suppress bogus soiling alarms.',
+        text: 'Rooftop pyranometer reading +7.4 % above fleet-implied irradiance consensus over 7 consecutive clear diurnal cycles.',
+        action: 'Engine action: Auto-calibrating POA series with factor 0.931 to suppress bogus soiling alarms.',
         time: 'Active since 12 Mar 06:00 IST',
       })
     }
-    if (selectedPlantId === 'pavagada-p4') {
+    if (selectedPlantId === 'dept-roof-cluster') {
       list.push({
         id: 'stuck-1',
         severity: 'critical',
-        text: 'Combiner Box SCB-02 string 07 current frozen at 0.0 A for 1,420 daylight minutes (POA > 200 W/m²).',
+        text: 'Department Roof string 03 current frozen at 0.0 A for 1,420 daylight minutes (POA > 200 W/m²).',
         action: 'Engine action: Classified as physical open circuit disconnected branch; passed to root-cause fusion.',
         time: 'Day 3 through Day 7',
       })

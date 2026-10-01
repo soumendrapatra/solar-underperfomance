@@ -59,6 +59,15 @@ function IconSettings() {
   )
 }
 
+function IconMethodology() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M2 3h12a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" />
+      <path d="M4 6h8M4 9h6M4 12h4" />
+    </svg>
+  )
+}
+
 function IconCollapse({ isCollapsed }) {
   return (
     <svg
@@ -78,11 +87,12 @@ function IconCollapse({ isCollapsed }) {
 }
 
 const NAV_ITEMS = [
-  { to: '/app', label: 'Portfolio', icon: IconPortfolio, exact: true },
-  { to: '/app/work-orders', label: 'Work Orders', icon: IconWorkOrders },
+  { to: '/app', label: 'Campus Overview', icon: IconPortfolio, exact: true },
+  { to: '/app/work-orders', label: 'Maintenance', icon: IconWorkOrders },
   { to: '/app/lab', label: 'Scenario Lab', icon: IconLab },
   { to: '/app/data-health', label: 'Data Health', icon: IconDataHealth },
-  { to: '/app/model', label: 'Model Report', icon: IconModel },
+  { to: '/app/model', label: 'Model Evaluation', icon: IconModel },
+  { to: '/app/methodology', label: 'Methodology', icon: IconMethodology },
   { to: '/app/settings', label: 'Settings', icon: IconSettings },
 ]
 
@@ -111,11 +121,11 @@ export function Sidebar({ isCollapsed, onToggleCollapse }) {
         <div className="h-12 border-b border-line dark:border-console-line flex items-center justify-between px-4">
           <div className="flex items-center gap-2 overflow-hidden">
             <span className="font-display text-lg font-medium tracking-tight text-ink dark:text-console-text">
-              Kiran
+              SolarPower
             </span>
             {!isCollapsed && (
-              <span className="font-mono text-[9px] uppercase tracking-wider px-1.5 py-0.5 border border-line dark:border-console-line bg-paper-2 dark:bg-console-bg text-ink-2 dark:text-console-text/60">
-                RCA
+              <span className="font-mono text-[9px] uppercase tracking-wider px-1.5 py-0.5 border border-line dark:border-console-line bg-paper-2 dark:bg-console-bg text-accent font-semibold">
+                CAMPUS
               </span>
             )}
           </div>
@@ -177,7 +187,7 @@ export function Sidebar({ isCollapsed, onToggleCollapse }) {
           <>
             <div>
               <span className="label text-[9px] text-ink-2/70 dark:text-console-text/50 block mb-1">
-                ACTIVE ASSET
+                CAMPUS ROOF ZONE
               </span>
               <select
                 value={selectedPlantId}

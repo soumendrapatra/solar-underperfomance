@@ -1,7 +1,9 @@
 /**
- * Plant model and asset hierarchy factory.
+ * Plant model and asset hierarchy factory for GCE Kalahandi campus rooftop zones.
  * Pure JavaScript, no external dependencies.
  */
+
+import { CAMPUS_SOLAR_ZONES, COLLEGE, DEFAULT_SETTINGS } from '../../config/campus.js'
 
 export const STANDARD_MODULE = {
   pNom: 545,          // Nameplate rating in Wp
@@ -16,41 +18,40 @@ export const STANDARD_MODULE = {
 
 /**
  * Creates an Inverter asset definition with MPPTs, Combiner Boxes (SCBs), and Strings.
- * @param {string} id - e.g. "INV-01"
+ * @param {string} id - e.g. "INV-A1"
+ * @param {number} pAcRated - kWac rating
+ * @param {number} pDcRated - kWp DC rating
  * @param {object} [moduleSpec]
  * @returns {object} Inverter asset model
  */
-export function createInverter(id, moduleSpec = STANDARD_MODULE) {
-  const pAcRated = 1250 // kWac
-  const dcAcRatio = 1.24
-  const pDcRated = pAcRated * dcAcRatio // 1550 kWp
+export function createInverter(id, pAcRated = 25, pDcRated = 27.5, moduleSpec = STANDARD_MODULE) {
+  const dcAcRatio = pAcRated > 0 ? pDcRated / pAcRated : 1.11
 
-  // 2 MPPTs, each with 2 SCBs, each with 12 strings of 28 modules
+  // 2 MPPTs, each with 1 or 2 combiner channels
   const mppts = [1, 2].map((mpptNum) => {
     const mpptId = `MPPT-${mpptNum}`
-    const scbStart = (mpptNum - 1) * 2 + 1
-    const combinerBoxes = [scbStart, scbStart + 1].map((scbNum) => {
-      const scbId = `SCB-${String(scbNum).padStart(2, '0')}`
-      const strings = Array.from({ length: 12 }, (_, sIdx) => {
-        const stringId = `S${String(sIdx + 1).padStart(2, '0')}`
-        return {
-          id: stringId,
-          fullId: `${id}/${scbId}/${stringId}`,
-          modulesCount: 28,
-          module: { ...moduleSpec },
-          stringVmp: 28 * moduleSpec.vmp,   // ~1170.4 V
-          stringVoc: 28 * moduleSpec.voc,   // ~1388.8 V
-          stringPnom: (28 * moduleSpec.pNom) / 1000, // kWp (~15.26 kWp)
-        }
-      })
-
+    const scbId = `SCB-${id.replace('INV-', '')}${mpptNum}`
+    const strings = Array.from({ length: 4 }, (_, sIdx) => {
+      const stringId = `STR-${String(sIdx + 1).padStart(2, '0')}`
       return {
+        id: stringId,
+        fullId: `${id}/${scbId}/${stringId}`,
+        modulesCount: 20,
+        module: { ...moduleSpec },
+        stringVmp: 20 * moduleSpec.vmp,
+        stringVoc: 20 * moduleSpec.voc,
+        stringPnom: (20 * moduleSpec.pNom) / 1000,
+      }
+    })
+
+    const combinerBoxes = [
+      {
         id: scbId,
         fullId: `${id}/${scbId}`,
         strings,
-        stringsCount: 12,
-      }
-    })
+        stringsCount: strings.length,
+      },
+    ]
 
     return {
       id: mpptId,
@@ -65,132 +66,90 @@ export function createInverter(id, moduleSpec = STANDARD_MODULE) {
     pDcRated,
     dcAcRatio,
     mppts,
-    // Flattened quick-access maps
     combinerBoxes: mppts.flatMap((m) => m.combinerBoxes),
   }
 }
 
 /**
- * Creates a solar PV plant asset model.
- * Default plant is Bhadla Block C (Rajasthan, India).
+ * Creates a campus solar rooftop zone asset model.
+ * Default zone is Main Academic Block (GCE Kalahandi).
  * @param {object} [config]
- * @returns {object} Plant asset hierarchy
+ * @returns {object} Zone asset hierarchy
  */
 export function createPlant(config = {}) {
+  const defaultZone = CAMPUS_SOLAR_ZONES[0]
   const {
-    id = 'bhadla-block-c',
-    name = 'Bhadla Block C',
+    id = defaultZone.id,
+    zoneId = defaultZone.zoneId,
+    name = defaultZone.name,
+    description = defaultZone.description,
     location = {
-      lat: 27.5,
-      lon: 71.9,
-      elevation: 215,
-      region: 'Rajasthan',
+      lat: COLLEGE.coordinates.lat,
+      lon: COLLEGE.coordinates.lon,
+      elevation: 250,
+      region: COLLEGE.location,
       country: 'India',
+      note: COLLEGE.coordinates.note,
     },
     timezone = 'Asia/Kolkata',
-    tilt = 25,
-    azimuth = 180, // 180 = True South in northern hemisphere
-    inverterCount = 8,
+    tilt = 20,
+    azimuth = 180, // True South
+    capacityDcKw = defaultZone.capacityDcKw,
+    capacityAcKw = defaultZone.capacityAcKw,
+    inverterIds = defaultZone.inverters,
     moduleSpec = STANDARD_MODULE,
-    tariffInrPerKwh = 2.48,
+    tariffInrPerKwh = DEFAULT_SETTINGS.tariffInrPerKwh,
+    defaultIssue = defaultZone.defaultIssue,
   } = config
 
-  const inverters = Array.from({ length: inverterCount }, (_, i) => {
-    const invId = `INV-${String(i + 1).padStart(2, '0')}`
-    return createInverter(invId, moduleSpec)
-  })
+  const invCount = inverterIds.length || 1
+  const perInvAc = capacityAcKw / invCount
+  const perInvDc = capacityDcKw / invCount
 
-  const pAcRatedTotal = inverters.reduce((sum, inv) => sum + inv.pAcRated, 0)
-  const pDcRatedTotal = inverters.reduce((sum, inv) => sum + inv.pDcRated, 0)
+  const inverters = inverterIds.map((invId) =>
+    createInverter(invId, perInvAc, perInvDc, moduleSpec)
+  )
 
   return {
     id,
+    zoneId,
     name,
+    description,
     location,
     timezone,
     tilt,
+    tiltDeg: tilt,
     azimuth,
+    azimuthDeg: azimuth,
     inverters,
-    inverterCount,
+    inverterCount: inverters.length,
     moduleSpec,
     tariffInrPerKwh,
-    acCapacityKw: pAcRatedTotal,       // 10,000 kWac (10 MWac)
-    dcCapacityKwp: pDcRatedTotal,     // 12,400 kWp (12.4 MWp DC)
-    dcAcRatio: pDcRatedTotal / pAcRatedTotal,
-    stringsPerInverter: 48,
-    totalStrings: inverterCount * 48,
+    acCapacityKw: capacityAcKw,
+    dcCapacityKwp: capacityDcKw,
+    dcAcRatio: capacityDcKw / capacityAcKw,
+    stringsPerInverter: 8,
+    totalStrings: inverters.length * 8,
+    defaultIssue,
+    campus: COLLEGE.name,
   }
 }
 
 /**
- * Returns portfolio of 4 diverse commercial and utility solar assets.
- * @returns {object[]} Array of 4 plants
+ * Returns portfolio of all 5 GCE Kalahandi campus rooftop solar zones.
+ * @returns {object[]} Array of 5 campus solar zones
  */
 export function createPortfolio() {
-  return [
+  return CAMPUS_SOLAR_ZONES.map((zone) =>
     createPlant({
-      id: 'bhadla-block-c',
-      name: 'Bhadla Block C',
-      location: {
-        lat: 27.5,
-        lon: 71.9,
-        elevation: 215,
-        region: 'Rajasthan',
-        country: 'India',
-      },
-      timezone: 'Asia/Kolkata',
-      tilt: 25,
-      azimuth: 180,
-      inverterCount: 8,
-      tariffInrPerKwh: 2.48,
-    }),
-    createPlant({
-      id: 'pavagada-p4',
-      name: 'Pavagada P4',
-      location: {
-        lat: 14.1,
-        lon: 77.25,
-        elevation: 620,
-        region: 'Karnataka',
-        country: 'India',
-      },
-      timezone: 'Asia/Kolkata',
-      tilt: 15,
-      azimuth: 180,
-      inverterCount: 16, // 20 MWac / 24.8 MWp
-      tariffInrPerKwh: 2.85,
-    }),
-    createPlant({
-      id: 'charanka-rooftop-cluster',
-      name: 'Charanka Rooftop Cluster',
-      location: {
-        lat: 23.9,
-        lon: 71.2,
-        elevation: 40,
-        region: 'Gujarat',
-        country: 'India',
-      },
-      timezone: 'Asia/Kolkata',
-      tilt: 12,
-      azimuth: 180,
-      inverterCount: 2, // 2.5 MWac / 3.1 MWp (C&I cluster)
-      tariffInrPerKwh: 3.42,
-    }),
-    createPlant({
-      id: 'kurnool-east',
-      name: 'Kurnool East',
-      location: {
-        lat: 15.68,
-        lon: 78.28,
-        elevation: 340,
-        region: 'Andhra Pradesh',
-        country: 'India',
-      },
-      timezone: 'Asia/Kolkata',
-      tilt: 15,
-      azimuth: 180,
-      inverterCount: 12, // 15 MWac / 18.6 MWp
-      tariffInrPerKwh: 2.93,
-    }),
-  ]
+      id: zone.id,
+      zoneId: zone.zoneId,
+      name: zone.name,
+      description: zone.description,
+      capacityDcKw: zone.capacityDcKw,
+      capacityAcKw: zone.capacityAcKw,
+      inverterIds: zone.inverters,
+      defaultIssue: zone.defaultIssue,
+    })
+  )
 }

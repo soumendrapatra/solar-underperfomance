@@ -98,6 +98,10 @@ export function LossWaterfallChart({ waterfall }) {
   const colWidth = chartW / barCount
   const barWidth = Math.min(50, colWidth * 0.72)
 
+  const isKwhScale = (plantWf.expectedKwh || 0) < 1500
+  const formatEnergy = (kwh) => isKwhScale ? `${Math.round(kwh)} kWh` : `${(kwh / 1000).toFixed(1)} MWh`
+  const identifiedLossKwh = totalGapMwh * 1000 - (plantWf.items.find(i => i.key === 'unexplained')?.kwh || 0)
+
   return (
     <Card header="Generation Loss Disaggregation Waterfall" figure="03" className="space-y-4">
       {/* Subtitle / summary */}
@@ -105,11 +109,11 @@ export function LossWaterfallChart({ waterfall }) {
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1.5">
             <span className="w-3 h-3 bg-ink dark:bg-console-text inline-block rounded-[1px]" />
-            <span className="label text-ink dark:text-console-text">Expected ({expectedMwh.toFixed(1)} MWh)</span>
+            <span className="label text-ink dark:text-console-text">Expected ({formatEnergy(plantWf.expectedKwh)})</span>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="w-3 h-3 bg-fault inline-block rounded-[1px]" />
-            <span className="label text-fault">Identified Losses (-{(totalGapMwh - (plantWf.items.find(i => i.key === 'unexplained')?.kwh || 0)/1000).toFixed(1)} MWh)</span>
+            <span className="label text-fault">Identified Losses (-{formatEnergy(identifiedLossKwh)})</span>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="w-3 h-3 bg-ink-2 dark:bg-console-line inline-block rounded-[1px]" />
@@ -117,12 +121,12 @@ export function LossWaterfallChart({ waterfall }) {
           </div>
           <div className="flex items-center gap-1.5">
             <span className="w-3 h-3 bg-accent inline-block rounded-[1px]" />
-            <span className="label text-accent font-medium">Actual ({actualMwh.toFixed(1)} MWh)</span>
+            <span className="label text-accent font-medium">Actual ({formatEnergy(plantWf.actualKwh)})</span>
           </div>
         </div>
 
         <span className="font-mono text-[11px] text-ink-2 dark:text-console-text/60">
-          TOTAL YIELD GAP: -{totalGapMwh.toFixed(1)} MWh ({((totalGapMwh / Math.max(1e-4, expectedMwh)) * 100).toFixed(1)}%)
+          TOTAL YIELD GAP: -{formatEnergy(plantWf.totalGapKwh)} ({((plantWf.totalGapKwh / Math.max(1, plantWf.expectedKwh)) * 100).toFixed(1)}%)
         </span>
       </div>
 
