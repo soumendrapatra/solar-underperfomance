@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { motion, AnimatePresence, Reorder } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useWorkOrderStore, WORK_ORDER_STATUSES } from '../store/useWorkOrderStore.js'
 import { usePlantStore } from '../store/usePlantStore.js'
 import { useSettingsStore } from '../store/useSettingsStore.js'
