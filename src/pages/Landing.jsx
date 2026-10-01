@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import metricsData from '../data/metrics.json'
 import { useReducedMotion } from '../hooks/useReducedMotion.js'
 import { Badge, Button } from '@/components/ui'
